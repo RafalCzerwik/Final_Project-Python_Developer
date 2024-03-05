@@ -1,0 +1,96 @@
+/* Resetowanie stylów */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Definicje kolorów */
+:root {
+  --bg-color: #333;
+  --header-footer-bg: #2d2d2d;
+  --text-color: #413f3f;
+  --category-bg: #444;
+  --search-carousel-bg: #555;
+  --border-color: #999;
+}
+
+/* Globalne style */
+body {
+  font-family: 'Calibri', sans-serif;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+header,
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--header-footer-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+footer {
+  border-top: 1px solid var(--border-color);
+}
+
+.categories {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 1rem;
+  gap: 1rem;
+  background-color: var(--category-bg);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.categories h2 {
+  font-size: 1.3rem;
+}
+
+.search,
+.carousel {
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--search-carousel-bg);
+}
+
+.listing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.listing img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Media query dla mniejszych ekranów */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  header,
+  footer {
+    padding: 0.5rem;
+  }
+
+  .categories {
+    padding: 0.5rem;
+  }
+
+  .search,
+  .carousel {
+    padding: 1rem;
+  }
+}
