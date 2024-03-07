@@ -1,0 +1,178 @@
+{% extends "sell_it_app/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 40px; margin-bottom: 50px; background: white">
+    <div class="row justify-content-center" style="background: #ffffff">
+        <div class="col-md-10" style="background-color: white">
+                <form class="container-fluid" style="background: white">
+                    <div class="input-group" style="background: white">
+                        <input type="search" class="form-control" placeholder="Search in categories..." aria-label="Search" aria-describedby="basic-addon1" style="background: white">
+                        <button class="btn btn-outline-primary" type="submit" id="basic-addon1" style="background: white;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                            </svg>
+                            Search</button>
+                    </div>
+                </form>
+        </div>
+    </div>
+</div>
+<div class="container" style="margin-bottom: 100px;">
+    <style>
+    .round-image {
+        width: 200px;
+        height: 200px;
+        background-size: cover;
+        background-position: top;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 1px solid black;
+    }
+    </style>
+    <div class="row">
+        <div class="col-md-2">
+            <div class="round-image" style="background-image: url('/static/images/CV.jpeg');"></div>
+        </div>
+        <div class="col-md-10">
+            <span style="font-size: xx-large; font: aptos"><b>Rafal Michal Czerwik</b></span>
+        <div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="blue" class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+                <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+            </svg>
+            <span style="font-size: medium; color: blue">Verified user</span>
+        </div>
+        <div>
+            <span>rafal.czerwik@gmail.com</span>
+        <div>
+        <div class="rating-container">
+            <style>
+                .rating-container {
+                    display: flex;
+                    align-items: center;
+                }
+
+                .rating-circle {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    background-color: blue; /* Niebieski kolor */
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    color: white;
+                    font-size: 14px;
+                }
+                .rating-scale {
+                    margin-left: 10px; /* Odstęp między oceną a tekstem */
+                }
+
+                .rating-text {
+                    font-size: 16px;
+                    color: blue;
+                }
+            </style>
+            <div class="rating-circle">8.5</div>
+            <div class="rating-scale">
+                <div class="rating-text">62 ratings</div>
+            </div>
+
+        </div>
+        <div class="buttons" style="margin-top: 20px;">
+            <button type="button" class="btn btn-outline-primary btn-sm">Profile</button>
+            <button type="button" class="btn btn-outline-primary btn-sm">Edit profile</button>
+        </div>
+        </div>
+    </div>
+</div>
+<div class="container" style="margin-top: 50px;">
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px; margin-right: 20px;">
+            <div style="margin-top: 15px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+            </svg>
+            </div>
+            <div style="margin-top: 10px;">
+                <span style="font-size: x-large; font: bold;"><b>My account</b></span>
+            </div>
+            <div style="margin-top: 10px; margin-bottom: 20px;">
+                View your information on the Sell-It account
+            </div>
+        </div>
+        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px; margin-right: 20px;">
+            <div style="margin-top: 15px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-card-list" viewBox="0 0 16 16">
+                <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z"/>
+                <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8m0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0M4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0m0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
+            </svg>
+            </div>
+            <div style="margin-top: 10px;">
+                <span style="font-size: x-large; font: bold"><b>My listings</b></span>
+            </div>
+            <div style="margin-top: 10px; margin-bottom: 20px;">
+                See all your listings and get an overview of statistics
+            </div>
+        </div>
+        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px;">
+            <div style="margin-top: 15px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+            </svg>
+            </div>
+            <div style="margin-top: 10px;">
+                <span style="font-size: x-large; font: bold"><b>My addresses</b></span>
+            </div>
+            <div style="margin-top: 10px; margin-bottom: 20px;">
+                See all your registered addresses.
+            </div>
+        </div>
+    </div>
+    <div class="row row d-flex justify-content-center">
+        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px; margin-right: 20px;">
+            <div style="margin-top: 15px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-credit-card" viewBox="0 0 16 16">
+                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/>
+                <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
+            </svg>
+            </div>
+            <div style="margin-top: 10px;">
+                <span style="font-size: x-large; font: bold"><b>Payments</b></span>
+            </div>
+            <div style="margin-top: 10px; margin-bottom: 20px;">
+                View payment information and overview of payments
+            </div>
+        </div>
+        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px; margin-right: 20px;">
+            <div style="margin-top: 15px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+            </svg>
+            </div>
+            <div style="margin-top: 10px;">
+                <span style="font-size: x-large; font: bold"><b>Favourites</b></span>
+            </div>
+            <div style="margin-top: 10px; margin-bottom: 20px;">
+                See all the ads you like and have added as favorites on Sell-It
+            </div>
+        </div>
+        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px;">
+            <div style="margin-top: 15px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+            </svg>
+            </div>
+            <div style="margin-top: 10px;">
+                <span style="font-size: x-large; font: bold"><b>Saved searches</b></span>
+            </div>
+            <div style="margin-top: 10px; margin-bottom: 20px;">
+                Keep track of and customize your saved searches
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

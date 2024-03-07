@@ -1,0 +1,80 @@
+{% extends 'sell_it_app/base.html' %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 30px;">
+    <h5 style="font-size: x-large; font: bold; margin-bottom: 20px;">My messages</h5>
+    <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="margin-bottom: 30px;">
+      <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+      <label class="btn btn-outline-primary" for="btnradio1">All (0)</label>
+
+      <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+      <label class="btn btn-outline-primary" for="btnradio2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+              <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+          </svg>
+          Unread (0)</label>
+
+      <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+      <label class="btn btn-outline-primary" for="btnradio3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-open" viewBox="0 0 16 16">
+            <path d="M8.47 1.318a1 1 0 0 0-.94 0l-6 3.2A1 1 0 0 0 1 5.4v.817l5.75 3.45L8 8.917l1.25.75L15 6.217V5.4a1 1 0 0 0-.53-.882zM15 7.383l-4.778 2.867L15 13.117zm-.035 6.88L8 10.082l-6.965 4.18A1 1 0 0 0 2 15h12a1 1 0 0 0 .965-.738ZM1 13.116l4.778-2.867L1 7.383v5.734ZM7.059.435a2 2 0 0 1 1.882 0l6 3.2A2 2 0 0 1 16 5.4V14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5.4a2 2 0 0 1 1.059-1.765z"/>
+          </svg>
+          Read (0)</label>
+        <button type="button" class="btn btn-outline-success">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send" viewBox="0 0 16 16">
+                <path d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z"/>
+            </svg>
+            Send message</button>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 d-flex align-items-center" style="margin-top: 10px; margin-bottom: 5px; margin-right: 10px; border-radius: 10px; border: 1px solid #e0dfdf;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="red" class="bi bi-envelope" viewBox="0 0 16 16">
+                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+            </svg>
+            <div class="col d-flex flex-column" style="margin-left: 10px;">
+                <a href="#"><b>Message title</b></a>
+                <span style="font-size: x-small">From: User</span>
+            </div>
+            <div class="btn-group-sm" role="group" aria-label="Basic mixed styles example">
+              <button type="button" class="btn btn-outline-warning">Answer</button>
+              <button type="button" class="btn btn-outline-danger">Delete</button>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex align-items-center" style="margin-top: 10px; margin-bottom: 5px; margin-right: 10px; border-radius: 10px; border: 1px solid #e0dfdf;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="green" class="bi bi-envelope-open" viewBox="0 0 16 16">
+                <path d="M8.47 1.318a1 1 0 0 0-.94 0l-6 3.2A1 1 0 0 0 1 5.4v.817l5.75 3.45L8 8.917l1.25.75L15 6.217V5.4a1 1 0 0 0-.53-.882zM15 7.383l-4.778 2.867L15 13.117zm-.035 6.88L8 10.082l-6.965 4.18A1 1 0 0 0 2 15h12a1 1 0 0 0 .965-.738ZM1 13.116l4.778-2.867L1 7.383v5.734ZM7.059.435a2 2 0 0 1 1.882 0l6 3.2A2 2 0 0 1 16 5.4V14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5.4a2 2 0 0 1 1.059-1.765z"/>
+            </svg>
+            <div class="col d-flex flex-column" style="margin-left: 10px;">
+                <a href="#"><b>Message title</b></a>
+                <span style="font-size: x-small">From: User</span>
+            </div>
+            <div class="btn-group-sm" role="group" aria-label="Basic mixed styles example">
+              <button type="button" class="btn btn-outline-primary">Answer</button>
+              <button type="button" class="btn btn-outline-primary">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="paginator d-flex align-items-center justify-content-center" style="margin-top: 30px;">
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <li class="page-item"><a class="page-link" href="#">1</a></li>
+    <li class="page-item"><a class="page-link" href="#">2</a></li>
+    <li class="page-item"><a class="page-link" href="#">3</a></li>
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+</div>
+{% endblock %}

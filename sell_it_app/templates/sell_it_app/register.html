@@ -1,0 +1,63 @@
+{% extends "sell_it_app/base.html" %}
+
+{% block title %}Register account{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="container d-flex justify-content-center align-items-center" style="background-color: #02027e; margin-top: 100px; margin-bottom: 300px; border-radius: 20px;">
+                <form action="{% url 'register' %}" method="post" class="form-register">
+                    {% csrf_token %}
+                    <h1 class="h3 mb-3 font-weight-normal text-center" style="margin-top: 50px; color: white">Register account</h1>
+                    <fieldset class="form-group mb-3 text-center">
+                        <legend class="sr-only" style="color: white; font-size: large;">Gender</legend>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" id="male" value="male" required>
+                            <label class="form-check-label" for="male" style="color: white; font-size: small;">Male</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" id="female" value="female">
+                            <label class="form-check-label" for="female" style="color: white; font-size: small">Female</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" id="other" value="other">
+                            <label class="form-check-label" for="other" style="color: white; font-size: small;">Other</label>
+                        </div>
+                    </fieldset>
+
+                    <label for="first-name" class="sr-only" style="color: white; font-size: small;">First Name</label>
+                    <input type="text" id="first-name" name="first_name" class="form-control mb-3" placeholder="First Name" required autofocus>
+
+                    <label for="last-name" class="sr-only" style="color: white; font-size: small;">Last Name</label>
+                    <input type="text" id="last-name" name="last_name" class="form-control mb-3" placeholder="Last Name" required>
+
+                    <label for="login" class="sr-only" style="color: white; font-size: small;">Login</label>
+                    <input type="text" id="login" name="username" class="form-control mb-3" placeholder="Login" required autofocus>
+
+                    <label for="password" class="sr-only" style="color: white; font-size: small;">Password</label>
+                    <input type="password" id="password" name="password" class="form-control mb-3" placeholder="Password" required>
+
+                    <label for="password-confirm" class="sr-only" style="color: white; font-size: small;">Confirm Password</label>
+                    <input type="password" id="password-confirm" name="password_confirm" class="form-control mb-3" placeholder="Confirm Password" required>
+
+                    <label for="email" class="sr-only" style="color: white; font-size: small;">Email</label>
+                    <input type="email" id="email" name="email" class="form-control mb-3" placeholder="Email" required>
+
+                    <label for="dob" class="sr-only" style="color: white; font-size: small;">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" class="form-control mb-3" placeholder="Date of Birth" required>
+                    <div class="text-center" style="margin-top: 50px;">
+                        <button class="btn btn-lg btn-secondary btn-block" type="submit" style="margin-bottom: 30px; text-align: center; color: #02027e; background-color: #c2c1c1; border-radius: 30px;"">Create account</button>
+                    </div>
+                    <div class="text-center" style="color: #a4a4f1; margin-bottom: 10px;">
+                        <a href="login/">Already registered? Sign in on your account</a>
+                    </div>
+                    <div class="text-center" style="color: #a4a4f1; margin-bottom: 40px;">
+                        <a href="/">Back to Main Page</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -17,9 +17,27 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from sell_it_app.views import IndexView
+from sell_it_app.views import (IndexView,
+                               LoginView,
+                               RegisterView,
+                               DashboardView,
+                               TestView,
+                               SearchView,
+                               MyListingsView,
+                               MessagesView,
+                               AddListingView,
+                               SendMessageView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', IndexView.as_view(), name='index'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('register/', RegisterView.as_view(), name='register'),
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('test/', TestView.as_view(), name='test'),
+    path('search/', SearchView.as_view(), name='search'),
+    path('listings/', MyListingsView.as_view(), name='listings'),
+    path('messages/', MessagesView.as_view(), name='messages'),
+    path('add-listing/', AddListingView.as_view(), name='add-listing'),
+    path('send-message/', SendMessageView.as_view(), name='send-message'),
 ]
