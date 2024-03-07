@@ -27,6 +27,11 @@ class DashboardView(View):
         return render(request, 'sell_it_app/dashboard.html')
 
 
+class ProfileView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/profile.html')
+
+
 class TestView(View):
     def get(self, request):
         return render(request, 'sell_it_app/test.html')
@@ -56,4 +61,13 @@ class AddListingView(View):
     def get(self, request):
         return render(request, 'sell_it_app/add_listing.html')
 
+
+class ListingView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/listing.html')
+
+
+class ContactUsView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/contact_us.html')
 

@@ -1,0 +1,66 @@
+{% extends 'sell_it_app/base.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 30px;">
+    <h5 style="font-size: x-large; font: bold; margin-bottom: 20px;">Update profile</h5>
+</div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col" style="border: 1px solid #e0dfdf; border-radius: 10px;">
+            <div class="container" style="background-color: #ffffff; margin-top: 20px; margin-bottom: 20px; border-radius: 20px;">
+                <form action="{% url 'profile' %}" method="post" class="form-register">
+                    {% csrf_token %}
+                    <div class="col" style="margin-bottom: 20px;">
+                            <style>
+                            .round-image {
+                                width: 100px;
+                                height: 100px;
+                                background-size: cover;
+                                background-position: top;
+                                border-radius: 50%;
+                                overflow: hidden;
+                                border: 1px solid black;
+                            }
+                            </style>
+                        <div class="col-md-2">
+                            <div class="round-image" style="background-image: url('/static/images/CV.jpeg');"></div>
+                        </div>
+                        <div class="col-md-3" style="margin-top: 20px;">
+                            <label for="first-name" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Change profile picture</b></label>
+                          <input class="form-control form-control-sm" id="formFileSm" type="file">
+                        </div>
+                    </div>
+                    <label for="first-name" class="sr-only" style="font-size: medium; margin-bottom: 10px;"><b>First Name</b></label>
+                    <input type="text" id="first-name" name="first_name" class="form-control mb-3" placeholder="First Name" required autofocus>
+
+                    <label for="last-name" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Last Name</b></label>
+                    <input type="text" id="last-name" name="last_name" class="form-control mb-3" placeholder="Last Name" required>
+
+                    <label for="login" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Login</b></label>
+                    <input type="text" id="login" name="username" class="form-control mb-3" placeholder="Login" disabled autofocus>
+
+                    <label for="password" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>New password</b></label>
+                    <input type="password" id="password" name="password" class="form-control mb-3" placeholder="Password" required>
+
+                    <label for="password-confirm" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Confirm new password</b></label>
+                    <input type="password" id="password-confirm" name="password_confirm" class="form-control mb-3" placeholder="Confirm Password" required>
+
+                    <label for="email" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Email</b></label>
+                    <input type="email" id="email" name="email" class="form-control mb-3" placeholder="Email" disabled>
+                    <div class="col-md-4">
+                    <label for="dob" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Date of Birth</b></label>
+                    <input type="date" id="dob" name="dob" class="form-control mb-3" placeholder="Date of Birth">
+                    </div>
+                    <div class="col-md-12 justify-content-center" style="margin-bottom: 20px; margin-top: 30px;">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" type="submit">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
