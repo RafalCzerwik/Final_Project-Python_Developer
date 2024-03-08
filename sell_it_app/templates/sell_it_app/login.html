@@ -9,9 +9,14 @@
                 <form action="{% url 'login' %}" method="post" class="form-signin">
                     {% csrf_token %}
                     <h1 class="h3 mb-3 font-weight-bold text-center" style="margin-top: 50px; color: white">Sign In</h1>
+                    {% if error_message %}
+                        <div class="alert alert-danger">
+                            {{ error_message }}
+                        </div>
+                    {% endif %}
                     <div class="text-left">
-                        <label for="login" class="sr-only" style="color: white; font-size: small">Login</label>
-                        <input type="text" id="login" name="username" class="form-control mb-3" placeholder="Login" required autofocus>
+                        <label for="username" class="sr-only" style="color: white; font-size: small">Login</label>
+                        <input type="text" id="username" name="username" class="form-control mb-3" placeholder="Login" required autofocus>
 
                         <label for="password" class="sr-only" style="color: white; font-size: small;">Password</label>
                         <input type="password" id="password" name="password" class="form-control mb-3" placeholder="Password" required>

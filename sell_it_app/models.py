@@ -43,7 +43,7 @@ class Address(models.Model):
 
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     street_name = models.CharField(max_length=255)
-    street_name_secondary = models.CharField(max_length=255)
+    street_name_secondary = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=50)
     postal_code = models.CharField(max_length=6)
     country = models.CharField(max_length=50)
