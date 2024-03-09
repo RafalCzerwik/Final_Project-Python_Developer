@@ -60,6 +60,11 @@ class ProfileView(View):
         return render(request, 'sell_it_app/profile.html')
 
 
+class PublicProfileView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/public_profile.html')
+
+
 class TestView(View):
     def get(self, request):
         return render(request, 'sell_it_app/test.html')
@@ -93,6 +98,31 @@ class AddListingView(View):
 class ListingView(View):
     def get(self, request):
         return render(request, 'sell_it_app/listing.html')
+
+
+class MyAddressView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/my_address.html')
+
+
+class PaymentsView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/payments.html')
+
+
+class FavouritesView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/favourites.html')
+
+
+class SavedSearchesView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/saved_searches.html')
+
+
+class AboutUsView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/about_us.html')
 
 
 class ContactUsView(View):

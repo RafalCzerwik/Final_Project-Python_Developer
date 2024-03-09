@@ -30,7 +30,13 @@ from sell_it_app.views import (IndexView,
                                ProfileView,
                                ContactUsView,
                                ListingView,
-                               LogOutView)
+                               LogOutView,
+                               MyAddressView,
+                               PaymentsView,
+                               FavouritesView,
+                               SavedSearchesView,
+                               AboutUsView,
+                               PublicProfileView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -40,6 +46,7 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('public-profile/', PublicProfileView.as_view(), name='public-profile'),
     path('test/', TestView.as_view(), name='test'),
     path('search/', SearchView.as_view(), name='search'),
     path('listings/', MyListingsView.as_view(), name='listings'),
@@ -47,5 +54,10 @@ urlpatterns = [
     path('add-listing/', AddListingView.as_view(), name='add-listing'),
     path('send-message/', SendMessageView.as_view(), name='send-message'),
     path('contact/', ContactUsView.as_view(), name='contact'),
+    path('about-us/', AboutUsView.as_view(), name='about-us'),
     path('listing-details/', ListingView.as_view(), name='listing-details'), #  <int:id>/
+    path('address/', MyAddressView.as_view(), name='address'),
+    path('payments/', PaymentsView.as_view(), name='payments'),
+    path('favourites/', FavouritesView.as_view(), name='favourites'),
+    path('saved-searches/', SavedSearchesView.as_view(), name='saved-searches'),
 ]
