@@ -135,7 +135,7 @@
         </div>
     </div>
     <div class="row row d-flex justify-content-center">
-        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px; margin-right: 20px;">
+        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px; margin-right: 20px; position:relative">
             <div style="margin-top: 15px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-credit-card" viewBox="0 0 16 16">
                 <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z"/>
@@ -148,8 +148,9 @@
             <div style="margin-top: 10px; margin-bottom: 20px;">
                 View payment information and overview of payments
             </div>
+            <a href="{% url 'payments' %}" class="stretched-link"></a>
         </div>
-        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px; margin-right: 20px;">
+        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px; margin-right: 20px; position: relative">
             <div style="margin-top: 15px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
                 <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
@@ -161,8 +162,9 @@
             <div style="margin-top: 10px; margin-bottom: 20px;">
                 See all the ads you like and have added as favorites on Sell-It
             </div>
+            <a href="{% url 'favourites' %}" class="stretched-link"></a>
         </div>
-        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px;">
+        <div class="col-md-3" style="border: 1px solid #dcdbdb; border-radius: 10px; margin-bottom: 20px; position: relative">
             <div style="margin-top: 15px;">
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
@@ -174,6 +176,7 @@
             <div style="margin-top: 10px; margin-bottom: 20px;">
                 Keep track of and customize your saved searches
             </div>
+             <a href="{% url 'saved-searches' %}" class="stretched-link"></a>
         </div>
     </div>
 </div>

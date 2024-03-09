@@ -31,15 +31,20 @@
                             <label for="first-name" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Change profile picture</b></label>
                           <input class="form-control form-control-sm" id="formFileSm" type="file">
                         </div>
+                        <div class="info" style="margin-top: -20px;">
+                            <span style="font-size: small; margin-left: 5px; margin-top: 20px; margin-bottom: 20px;">
+                                <br>Max filesize is 1MB.
+                            </span>
+                        </div>
                     </div>
                     <label for="first-name" class="sr-only" style="font-size: medium; margin-bottom: 10px;"><b>First Name</b></label>
-                    <input type="text" id="first-name" name="first_name" class="form-control mb-3" placeholder="First Name" required autofocus>
+                    <input type="text" id="first-name" name="first_name" class="form-control mb-3" placeholder="{{ user.first_name }}" required autofocus>
 
                     <label for="last-name" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Last Name</b></label>
-                    <input type="text" id="last-name" name="last_name" class="form-control mb-3" placeholder="Last Name" required>
+                    <input type="text" id="last-name" name="last_name" class="form-control mb-3" placeholder="{{ user.last_name }}" required>
 
                     <label for="login" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Login</b></label>
-                    <input type="text" id="login" name="username" class="form-control mb-3" placeholder="Login" disabled autofocus>
+                    <input type="text" id="login" name="username" class="form-control mb-3" placeholder="{{ user.username }}" disabled autofocus>
 
                     <label for="password" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>New password</b></label>
                     <input type="password" id="password" name="password" class="form-control mb-3" placeholder="Password" required>
@@ -48,10 +53,15 @@
                     <input type="password" id="password-confirm" name="password_confirm" class="form-control mb-3" placeholder="Confirm Password" required>
 
                     <label for="email" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Email</b></label>
-                    <input type="email" id="email" name="email" class="form-control mb-3" placeholder="Email" disabled>
+                    <input type="email" id="email" name="email" class="form-control mb-3" placeholder="{{ user.email }}" disabled>
                     <div class="col-md-4">
                     <label for="dob" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Date of Birth</b></label>
-                    <input type="date" id="dob" name="dob" class="form-control mb-3" placeholder="Date of Birth">
+                    <input type="date" id="dob" name="dob" class="form-control mb-3" placeholder="{{ user.date_of_birth }}">
+                    <div class="dob" style="margin-top: -10px; font-size: small">
+                        <span>
+                            (<b>Now:</b> {{ user.date_of_birth }})
+                        </span>
+                    </div>
                     </div>
                     <div class="col-md-12 justify-content-center" style="margin-bottom: 20px; margin-top: 30px;">
                         <div class="d-grid gap-2">

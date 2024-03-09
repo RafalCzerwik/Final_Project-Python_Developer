@@ -10,18 +10,23 @@
                 <form action="{% url 'register' %}" method="post" class="form-register">
                     {% csrf_token %}
                     <h1 class="h3 mb-3 font-weight-normal text-center" style="margin-top: 50px; color: white">Register account</h1>
+                    {% if error_message %}
+                        <div class="alert alert-danger">
+                            {{ error_message }}
+                        </div>
+                    {% endif %}
                     <fieldset class="form-group mb-3 text-center">
                         <legend class="sr-only" style="color: white; font-size: large;">Gender</legend>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="male" value="male" required>
+                            <input class="form-check-input" type="radio" name="gender" id="Male" value="M" required>
                             <label class="form-check-label" for="male" style="color: white; font-size: small;">Male</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="female" value="female">
+                            <input class="form-check-input" type="radio" name="gender" id="Female" value="F">
                             <label class="form-check-label" for="female" style="color: white; font-size: small">Female</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="other" value="other">
+                            <input class="form-check-input" type="radio" name="gender" id="Other" value="O">
                             <label class="form-check-label" for="other" style="color: white; font-size: small;">Other</label>
                         </div>
                     </fieldset>
@@ -50,10 +55,10 @@
                         <button class="btn btn-lg btn-secondary btn-block" type="submit" style="margin-bottom: 30px; text-align: center; color: #02027e; background-color: #c2c1c1; border-radius: 30px;"">Create account</button>
                     </div>
                     <div class="text-center" style="color: #a4a4f1; margin-bottom: 10px;">
-                        <a href="login/">Already registered? Sign in on your account</a>
+                        <a href="{% url 'login' %}">Already registered? Sign in on your account</a>
                     </div>
                     <div class="text-center" style="color: #a4a4f1; margin-bottom: 40px;">
-                        <a href="/">Back to Main Page</a>
+                        <a href="{% url 'index' %}">Back to Main Page</a>
                     </div>
                 </form>
             </div>

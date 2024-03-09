@@ -26,6 +26,7 @@ class LoginView(View):
     def post(self, request, *args, **kwargs):
         username = request.POST.get('username')
         password = request.POST.get('password')
+
         user = authenticate(username=username, password=password)
 
         if user is not None:
@@ -47,7 +48,52 @@ class RegisterView(View):
         return render(request, 'sell_it_app/register.html')
 
     def post(self, request, *args, **kwargs):
-        pass
+        username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        gender = request.POST.get('gender')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('password_confirm')
+        email = request.POST.get('email')
+        date_of_birth = request.POST.get('dob')
+
+        ctx = {
+            'username': username,
+            'first_name': first_name,
+            'last_name': last_name,
+            'gender': gender,
+            'password': password,
+            'confirm_password': confirm_password,
+            'email': email,
+            'date_of_birt': date_of_birth,
+        }
+
+        if User.objects.filter(username=username).exists():
+            error_message = 'Username already exists.'
+            return render(request, 'sell_it_app/register.html', {'error_message': error_message})
+
+        if gender not in dict(User.GENDER_CHOICES):
+            error_message = 'Invalid gender choice.'
+            return render(request, 'sell_it_app/register.html', {'error_message': error_message})
+
+        if len(password) < 6:
+            error_message = 'Password must be at least 6 characters long.'
+            return render(request, 'sell_it_app/register.html', {'error_message': error_message})
+        elif password != confirm_password:
+            error_message = 'Passwords do not match.'
+            return render(request, 'sell_it_app/register.html', {'error_message': error_message})
+        else:
+            new_user = User.objects.create_user(
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+                gender=gender,
+                email=email,
+                password=password,
+                date_of_birth=date_of_birth,
+            )
+            new_user.save()
+            return redirect('login')
 
 
 class DashboardView(View):
