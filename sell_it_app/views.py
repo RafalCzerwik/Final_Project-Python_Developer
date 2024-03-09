@@ -1,4 +1,4 @@
-from django.contrib.auth import get_user_model, authenticate, login
+from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -37,7 +37,9 @@ class LoginView(View):
 
 
 class LogOutView(View):
-    pass
+    def get(self, request):
+        logout(request)
+        return redirect('index')
 
 
 class RegisterView(View):

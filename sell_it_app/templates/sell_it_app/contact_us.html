@@ -25,12 +25,18 @@
         <h5 style="font-size: x-large; font: bold; margin-top: 20px; margin-bottom: 20px;">Contact us!</h5>
         <div class="col-md-12" style="border-radius: 10px; border: 1px solid #e0dfdf;">
             <div class="input-group mb-3" style="margin-top: 20px;">
+
               <span class="input-group-text" id="basic-addon1">Title</span>
               <input type="text" class="form-control" placeholder="Enter title here" aria-label="Title" aria-describedby="basic-addon1">
             </div>
             <div class="input-group mb-3">
-              <span class="input-group-text" id="basic-addon1">Email</span>
-              <input type="email" class="form-control" placeholder="name@example.com" aria-label="Email" aria-describedby="basic-addon1">
+                {% if user.is_authenticated %}
+                <span class="input-group-text" id="basic-addon1">Email</span>
+                <input type="email" class="form-control" placeholder="{{ user.email }}" aria-label="Email" aria-describedby="basic-addon1" disabled>
+                {% else %}
+                <span class="input-group-text" id="basic-addon1">Email</span>
+                <input type="email" class="form-control" placeholder="name@example.com" aria-label="Email" aria-describedby="basic-addon1">
+                {% endif %}
             </div>
             <div class="input-group" style="margin-bottom: 20px;">
               <span class="input-group-text">Message</span>
@@ -58,5 +64,4 @@
 
     </div>
 </div>
-
 {% endblock %}

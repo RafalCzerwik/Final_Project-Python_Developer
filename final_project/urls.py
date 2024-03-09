@@ -29,12 +29,14 @@ from sell_it_app.views import (IndexView,
                                SendMessageView,
                                ProfileView,
                                ContactUsView,
-                               ListingView)
+                               ListingView,
+                               LogOutView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', IndexView.as_view(), name='index'),
     path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogOutView.as_view(), name='logout'),
     path('register/', RegisterView.as_view(), name='register'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('profile/', ProfileView.as_view(), name='profile'),
