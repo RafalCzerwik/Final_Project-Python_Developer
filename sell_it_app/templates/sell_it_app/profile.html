@@ -46,6 +46,13 @@
                     <label for="login" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Login</b></label>
                     <input type="text" id="login" name="username" class="form-control mb-3" placeholder="{{ user.username }}" disabled autofocus>
 
+                    <div class="info" style="margin-top: -35px; margin-bottom: 10px;">
+                        <span style="font-size: small; margin-left: 5px; margin-top: 0px; margin-bottom: 20px;">
+                            <br>The modification of the username is strictly prohibited.
+                            If you wish to change your username, please contact the system administrator directly for assistance.
+                        </span>
+                    </div>
+
                     <label for="password" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>New password</b></label>
                     <input type="password" id="password" name="password" class="form-control mb-3" placeholder="Password" required>
 
@@ -54,6 +61,14 @@
 
                     <label for="email" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Email</b></label>
                     <input type="email" id="email" name="email" class="form-control mb-3" placeholder="{{ user.email }}" disabled>
+
+                    <div class="info" style="margin-top: -35px; margin-bottom: 10px;">
+                        <span style="font-size: small; margin-left: 5px; margin-top: 0px; margin-bottom: 20px;">
+                            <br>The modification of the username is strictly prohibited.
+                            If you wish to change your username, please contact the system administrator directly for assistance.
+                        </span>
+                    </div>
+
                     <div class="col-md-4">
                     <label for="dob" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Date of Birth</b></label>
                     <input type="date" id="dob" name="dob" class="form-control mb-3" placeholder="{{ user.date_of_birth }}">

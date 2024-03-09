@@ -19,14 +19,14 @@ class User(AbstractUser):
         ('F', 'Female'),
         ('O', 'Other'),
     )
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='F')
     phone_number = models.CharField(
         max_length=9,
         blank=True,
         null=True,
         validators=[RegexValidator(regex='^[0-9]{9}$',
                                    message='Phone number must have 9 digits!')])
-    date_of_birth = models.DateField(null=True)
+    date_of_birth = models.DateField(null=True, blank=True)
 
 
 class Address(models.Model):
