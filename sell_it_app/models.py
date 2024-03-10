@@ -28,6 +28,9 @@ class User(AbstractUser):
                                    message='Phone number must have 9 digits!')])
     date_of_birth = models.DateField(null=True, blank=True)
 
+    def __str__(self):
+        return self.username
+
 
 class Address(models.Model):
     """
@@ -71,14 +74,15 @@ class Category(models.Model):
 
 class Listings(models.Model):
     """
-        The Listings model holds information about a certain listing.
-        user_id: A foreign key relation to the User model. Identifies the user who listed the item.
-        category_id: Foreign key relation to the Category model. Identifies the category of the listing.
-        condition: Can be 'New' or 'Used'.
-        offer_type: The type of the listing, can be 'Sell', 'Buy' or 'Free'.
-        promotion: State of the listing, can be 'Promoted' or 'Not Promoted'.
-        All other fields hold information about the particular listing.
-        """
+    The Listings model holds information about a certain listing.
+    user_id: A foreign key relation to the User model. Identifies the user who listed the item.
+    category_id: Foreign key relation to the Category model. Identifies the category of the listing.
+    condition: Can be 'New' or 'Used'.
+    offer_type: The type of the listing, can be 'Sell', 'Buy' or 'Free'.
+    status: The status of the listing, can be 'ACTIVE' or 'INACTIVE'.
+    promotion: State of the listing, can be 'Promoted' or 'Not Promoted'.
+    All other fields hold information about the particular listing.
+    """
 
     CONDITION_CHOICES = (
         ('New', 'New'),
@@ -96,11 +100,17 @@ class Listings(models.Model):
         ('Not Promoted', 'Not Promoted'),
     )
 
+    STATUS_CHOICES = (
+        ('Active', 'Active'),
+        ('Inactive', 'Inactive'),
+    )
+
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     condition = models.CharField(max_length=20, choices=CONDITION_CHOICES, default='Used')
     offer_type = models.CharField(max_length=20, choices=OFFER_CHOICES, default='Sell')
     promotion = models.CharField(max_length=20, choices=PROMOTION_CHOICES, default='Not Promoted')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Active')
     title = models.CharField(max_length=255)
     description = models.TextField(max_length=2000)
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -117,11 +127,18 @@ class Messages(models.Model):
     date_sent: The date when the message was sent.
     """
 
-    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='from_messages')
+    STATUS_CHOICES = (
+        ('Read', 'Read'),
+        ('Unread', 'Unread')
+    )
+
+    from_user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='from_messages')
+    from_unregistered_user = models.EmailField(null=True, blank=True)
     to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='to_messages')
     title = models.CharField(max_length=60)
     message = models.TextField(max_length=1000)
-    date_sent = models.DateField(auto_now_add=True)
+    date_sent = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(choices=STATUS_CHOICES, default='Unread')
 
 
 class Picture(models.Model):

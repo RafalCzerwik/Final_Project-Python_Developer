@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model, authenticate, login, logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
+from sell_it_app.models import Messages
 
 User = get_user_model()
 
@@ -56,17 +57,6 @@ class RegisterView(View):
         confirm_password = request.POST.get('password_confirm')
         email = request.POST.get('email')
         date_of_birth = request.POST.get('dob')
-
-        ctx = {
-            'username': username,
-            'first_name': first_name,
-            'last_name': last_name,
-            'gender': gender,
-            'password': password,
-            'confirm_password': confirm_password,
-            'email': email,
-            'date_of_birt': date_of_birth,
-        }
 
         if User.objects.filter(username=username).exists():
             error_message = 'Username already exists.'
@@ -128,7 +118,45 @@ class MyListingsView(View):
 
 class MessagesView(View):
     def get(self, request):
-        return render(request, 'sell_it_app/messages.html')
+        user = request.user
+        if user.is_authenticated:
+            id = user.id
+            messages = Messages.objects.filter(to_user=id).order_by('-id')
+            user_messages = Messages.objects.filter(to_user_id=id).count()
+            user_unread_messages = Messages.objects.filter(to_user_id=id).filter(status='Unread').count()
+            user_read_messages = Messages.objects.filter(to_user_id=id).filter(status='Read').count()
+
+            ctx = {
+                'user_messages': user_messages,
+                'user_unread_messages': user_unread_messages,
+                'user_read_messages': user_read_messages,
+                'messages': messages,
+            }
+
+            return render(request, 'sell_it_app/messages.html', ctx)
+
+
+class MessageStatusUpdateView(View):
+    def post(self, request, message_id):
+        message = get_object_or_404(Messages, id=message_id)
+        if message.status == 'Unread':
+            message.status = 'Read'
+            message.save()
+            return redirect('messages')
+        if message.status == 'Read':
+            message.status = 'Unread'
+            message.save()
+            return redirect('messages')
+
+
+class MessageDeleteView(View):
+    def post(self, request, message_id):
+        message = get_object_or_404(Messages, id=message_id)
+
+        if message:
+            message.delete()
+
+            return redirect('messages')
 
 
 class SendMessageView(View):
@@ -175,3 +203,47 @@ class ContactUsView(View):
     def get(self, request):
         return render(request, 'sell_it_app/contact_us.html')
 
+    def post(self, request):
+        title = request.POST.get('title')
+        message = request.POST.get('message')
+
+        unregistered_email = request.POST.get('email')
+
+        user = request.user
+        admin = User.objects.get(username='Admin')
+
+        if user.is_authenticated:
+            sender = user.id
+
+            if user.username == admin.username:
+                error_message = "You can't send an email to yourself!"
+                return render(request, 'sell_it_app/contact_us.html', {'error_message': error_message})
+
+            else:
+                email_to_send = Messages.objects.create(
+                    title=title,
+                    message=message,
+                    from_user_id=sender,
+                    to_user_id=admin.id,
+                )
+                email_to_send.save()
+
+                success_message = "Message is successfully sent!"
+                return render(request, 'sell_it_app/contact_us.html', {'success_message': success_message})
+
+        else:
+            if "@" not in unregistered_email or "." not in unregistered_email:
+                error_message = 'Invalid email address.'
+                return render(request, 'sell_it_app/contact_us.html', {'error_message': error_message})
+
+            else:
+                email_to_send = Messages.objects.create(
+                    title=title,
+                    message=message,
+                    to_user_id=admin.id,
+                    from_unregistered_user=unregistered_email,
+                )
+                email_to_send.save()
+
+                success_message = "Message is successfully sent!"
+                return render(request, 'sell_it_app/contact_us.html', {'success_message': success_message})

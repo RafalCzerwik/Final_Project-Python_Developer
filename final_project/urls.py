@@ -36,7 +36,9 @@ from sell_it_app.views import (IndexView,
                                FavouritesView,
                                SavedSearchesView,
                                AboutUsView,
-                               PublicProfileView)
+                               PublicProfileView,
+                               MessageStatusUpdateView,
+                               MessageDeleteView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -51,6 +53,8 @@ urlpatterns = [
     path('search/', SearchView.as_view(), name='search'),
     path('listings/', MyListingsView.as_view(), name='listings'),
     path('messages/', MessagesView.as_view(), name='messages'),
+    path('message/update-status/<int:message_id>', MessageStatusUpdateView.as_view(), name='message-update-status'),
+    path('message/delete/<int:message_id>', MessageDeleteView.as_view(), name='message-delete'),
     path('add-listing/', AddListingView.as_view(), name='add-listing'),
     path('send-message/', SendMessageView.as_view(), name='send-message'),
     path('contact/', ContactUsView.as_view(), name='contact'),
