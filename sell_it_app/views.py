@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from sell_it_app.forms import AvatarForm
-from sell_it_app.models import Messages, Newsletter, Avatars
+from sell_it_app.models import Messages, Newsletter, Avatars, Listings
 
 User = get_user_model()
 
@@ -121,7 +121,10 @@ class PublicProfileView(View):
 
 class SearchView(View):
     def get(self, request):
-        return render(request, 'sell_it_app/search_results.html')
+        search_query = request.GET.get('search_query')
+        searching = Listings.objects.filter(title__icontains=search_query)
+        ctx = {'searching': searching}
+        return render(request, 'sell_it_app/search_results.html', ctx)
 
 
 class MyListingsView(LoginRequiredMixin, View):
