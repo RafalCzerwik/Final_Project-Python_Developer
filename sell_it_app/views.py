@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
-from sell_it_app.models import Messages
+from sell_it_app.models import Messages, Newsletter, Avatars
 
 User = get_user_model()
 
@@ -101,11 +101,6 @@ class PublicProfileView(View):
         return render(request, 'sell_it_app/public_profile.html')
 
 
-class TestView(View):
-    def get(self, request):
-        return render(request, 'sell_it_app/test.html')
-
-
 class SearchView(View):
     def get(self, request):
         return render(request, 'sell_it_app/search_results.html')
@@ -125,11 +120,13 @@ class MessagesView(View):
             user_messages = Messages.objects.filter(to_user_id=id).count()
             user_unread_messages = Messages.objects.filter(to_user_id=id).filter(status='Unread').count()
             user_read_messages = Messages.objects.filter(to_user_id=id).filter(status='Read').count()
+            user_sent_messages = Messages.objects.filter(from_user_id=id).count()
 
             ctx = {
                 'user_messages': user_messages,
                 'user_unread_messages': user_unread_messages,
                 'user_read_messages': user_read_messages,
+                'user_sent_messages': user_sent_messages,
                 'messages': messages,
             }
 
@@ -189,13 +186,15 @@ class SendMessageView(View):
 
     def post(self, request, message_id):
         current_message = get_object_or_404(Messages, pk=message_id)
-        title = request.POST.get('title')
+        # title = request.POST.get('title')
+        title = f"RE: {current_message.title}"
         message_text = request.POST.get('message')
         user = request.user
 
         message_from_user = current_message.message
         message_sender = current_message.from_user
         message_sender_unregistered = current_message.from_unregistered_user
+        message_title = current_message.title
 
         if current_message.from_user:
             send_message = Messages.objects.create(
@@ -212,6 +211,7 @@ class SendMessageView(View):
                 'current_message': current_message,
                 'message': message_from_user,
                 'sender': message_sender,
+                'title': message_title,
             }
 
             return render(request, 'sell_it_app/message.html', ctx)
@@ -222,6 +222,9 @@ class SendMessageView(View):
             ctx = {
                 'error_message': error_message,
                 'current_message': current_message,
+                'message': message_from_user,
+                'sender': message_sender_unregistered,
+                'title': message_title,
             }
             return render(request, 'sell_it_app/message.html', ctx)
 
@@ -309,3 +312,27 @@ class ContactUsView(View):
 
                 success_message = "Message is successfully sent!"
                 return render(request, 'sell_it_app/contact_us.html', {'success_message': success_message})
+
+
+class NewsletterView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/newsletter.html')
+
+    def post(self, request):
+        email = request.POST.get('email')
+
+        if email:
+            subscribe = Newsletter.objects.create(email=email)
+
+        return redirect('newsletter')
+
+
+class UpdateAvatarView(View):
+    def post(self, request, ):
+        file = request.FILES.get('file')
+
+        if file:
+            user = request.user
+            avatar = Avatars.objects.create(avatar=file, user=user.id)
+            avatar.save()
+            return redirect('profile')

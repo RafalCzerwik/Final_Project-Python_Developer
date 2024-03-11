@@ -21,7 +21,6 @@ from sell_it_app.views import (IndexView,
                                LoginView,
                                RegisterView,
                                DashboardView,
-                               TestView,
                                SearchView,
                                MyListingsView,
                                MessagesView,
@@ -39,7 +38,9 @@ from sell_it_app.views import (IndexView,
                                PublicProfileView,
                                MessageStatusUpdateView,
                                MessageDeleteView,
-                               ShowMessageView)
+                               ShowMessageView,
+                               NewsletterView,
+                               UpdateAvatarView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -50,7 +51,6 @@ urlpatterns = [
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('public-profile/', PublicProfileView.as_view(), name='public-profile'),
-    path('test/', TestView.as_view(), name='test'),
     path('search/', SearchView.as_view(), name='search'),
     path('listings/', MyListingsView.as_view(), name='listings'),
     path('messages/', MessagesView.as_view(), name='messages'),
@@ -66,4 +66,6 @@ urlpatterns = [
     path('payments/', PaymentsView.as_view(), name='payments'),
     path('favourites/', FavouritesView.as_view(), name='favourites'),
     path('saved-searches/', SavedSearchesView.as_view(), name='saved-searches'),
+    path('newsletter/', NewsletterView.as_view(), name='newsletter'),
+    path('avatar/', UpdateAvatarView.as_view(), name='update-avatar'),
 ]

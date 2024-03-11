@@ -1,0 +1,16 @@
+{% extends 'sell_it_app/base.html' %}
+
+{% block title %}Thanks!{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row text-center" style="margin-top: 100px;">
+        <div class="text" style="font-size: xx-large">
+            <span>Thanks for subscribing newsletter!</span>
+        </div>
+        <div class="redirect" style="font-size: large; margin-top: 10px;">
+            <span><a href="{% url 'index' %}">Back to main page</a></span>
+        </div>
+    </div>
+</div>
+{% endblock %}

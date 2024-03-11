@@ -370,11 +370,14 @@
             <div class="col-md-4">
                 <!-- Kontener z newsletterem -->
                 <div class="container" style="display: flex; justify-content: flex-end; align-items: center;">
+                    <form action="{% url 'newsletter' %}" method="post">
+                        {% csrf_token %}
                     <div class="d-flex">
                         <a class="navbar-brand">Newsletter:</a>
-                        <input type="email" class="form-control me-2" placeholder="Enter your email..." aria-label="Email address">
+                        <input type="email" id='email' name='email' class="form-control me-2" placeholder="Enter your email..." aria-label="Email address">
                         <button type="submit" class="btn btn-outline-primary">Subscribe</button>
                     </div>
+                    </form>
                 </div>
             </div>
         </div>

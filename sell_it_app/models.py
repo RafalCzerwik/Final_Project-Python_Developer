@@ -170,3 +170,7 @@ class Avatars(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     avatar = models.ImageField(upload_to='static/images/avatars/',
                                validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
+
+
+class Newsletter(models.Model):
+    email = models.EmailField(blank=False, null=False)

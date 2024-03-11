@@ -1,4 +1,4 @@
-from sell_it_app.models import Messages
+from sell_it_app.models import Messages, Newsletter
 
 
 def unread_messages(request):
