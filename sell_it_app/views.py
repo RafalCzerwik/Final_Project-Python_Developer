@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
@@ -39,7 +40,7 @@ class LoginView(View):
             return render(request, 'sell_it_app/login.html', {'error_message': error_message})
 
 
-class LogOutView(View):
+class LogOutView(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         return redirect('index')
@@ -87,13 +88,13 @@ class RegisterView(View):
             return redirect('login')
 
 
-class DashboardView(View):
+class DashboardView(LoginRequiredMixin, View):
     def get(self, request):
         avatar = Avatars.objects.filter(user_id=request.user).last()
         return render(request, 'sell_it_app/dashboard.html', {'avatar': avatar})
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
     def get(self, request):
         avatar = Avatars.objects.filter(user_id=request.user).last()
         form = AvatarForm()
@@ -123,12 +124,12 @@ class SearchView(View):
         return render(request, 'sell_it_app/search_results.html')
 
 
-class MyListingsView(View):
+class MyListingsView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'sell_it_app/my_listings.html')
 
 
-class MessagesView(View):
+class MessagesView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         if user.is_authenticated:
@@ -150,7 +151,7 @@ class MessagesView(View):
             return render(request, 'sell_it_app/messages.html', ctx)
 
 
-class MessageStatusUpdateView(View):
+class MessageStatusUpdateView(LoginRequiredMixin, View):
     def post(self, request, message_id):
         message = get_object_or_404(Messages, id=message_id)
         if message.status == 'Unread':
@@ -163,7 +164,7 @@ class MessageStatusUpdateView(View):
             return redirect('messages')
 
 
-class MessageDeleteView(View):
+class MessageDeleteView(LoginRequiredMixin, View):
     def post(self, request, message_id):
         message = get_object_or_404(Messages, id=message_id)
 
@@ -172,7 +173,7 @@ class MessageDeleteView(View):
             return redirect('messages')
 
 
-class ShowMessageView(View):
+class ShowMessageView(LoginRequiredMixin, View):
     def get(self, request, message_id):
         message = get_object_or_404(Messages, pk=message_id)
 
@@ -196,7 +197,7 @@ class ShowMessageView(View):
             return render(request, 'sell_it_app/message.html', ctx)
 
 
-class SendMessageView(View):
+class SendMessageView(LoginRequiredMixin, View):
     def get(self, request, message_id):
         current_message = get_object_or_404(Messages, pk=message_id)
         return render(request, 'sell_it_app/message.html', {'current_message': current_message})
@@ -246,32 +247,32 @@ class SendMessageView(View):
             return render(request, 'sell_it_app/message.html', ctx)
 
 
-class AddListingView(View):
+class AddListingView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'sell_it_app/add_listing.html')
 
 
-class ListingView(View):
+class ListingView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'sell_it_app/listing.html')
 
 
-class MyAddressView(View):
+class MyAddressView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'sell_it_app/my_address.html')
 
 
-class PaymentsView(View):
+class PaymentsView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'sell_it_app/payments.html')
 
 
-class FavouritesView(View):
+class FavouritesView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'sell_it_app/favourites.html')
 
 
-class SavedSearchesView(View):
+class SavedSearchesView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'sell_it_app/saved_searches.html')
 
@@ -343,13 +344,3 @@ class NewsletterView(View):
 
         return redirect('newsletter')
 
-
-# class UpdateAvatarView(View):
-#     def post(self, request):
-#         form = AvatarForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('profile')
-#         else:
-#             form = AvatarForm()
-#         return render(request, 'sell_it_app/profile.html', {'form': form})

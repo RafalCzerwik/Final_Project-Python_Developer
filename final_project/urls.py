@@ -42,7 +42,6 @@ from sell_it_app.views import (IndexView,
                                MessageDeleteView,
                                ShowMessageView,
                                NewsletterView)
-                               # UpdateAvatarView
 
 
 urlpatterns = [
@@ -70,7 +69,6 @@ urlpatterns = [
     path('favourites/', FavouritesView.as_view(), name='favourites'),
     path('saved-searches/', SavedSearchesView.as_view(), name='saved-searches'),
     path('newsletter/', NewsletterView.as_view(), name='newsletter'),
-    # path('update_avatar/', UpdateAvatarView.as_view(), name='update-avatar'),
 ]
 
 if settings.DEBUG:
