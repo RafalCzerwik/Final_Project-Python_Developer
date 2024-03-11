@@ -155,13 +155,75 @@ class MessageDeleteView(View):
 
         if message:
             message.delete()
-
             return redirect('messages')
 
 
+class ShowMessageView(View):
+    def get(self, request, message_id):
+        message = get_object_or_404(Messages, pk=message_id)
+
+        if message.from_unregistered_user:
+            ctx = {
+                'title': message.title,
+                'message': message.message,
+                'sender': message.from_unregistered_user,
+                'current_message': message,
+            }
+
+            return render(request, 'sell_it_app/message.html', ctx)
+        else:
+            ctx = {
+                'title': message.title,
+                'message': message.message,
+                'sender': message.from_user,
+                'current_message': message,
+            }
+
+            return render(request, 'sell_it_app/message.html', ctx)
+
+
 class SendMessageView(View):
-    def get(self, request):
-        return render(request, 'sell_it_app/send_message.html')
+    def get(self, request, message_id):
+        current_message = get_object_or_404(Messages, pk=message_id)
+        return render(request, 'sell_it_app/message.html', {'current_message': current_message})
+
+    def post(self, request, message_id):
+        current_message = get_object_or_404(Messages, pk=message_id)
+        title = request.POST.get('title')
+        message_text = request.POST.get('message')
+        user = request.user
+
+        message_from_user = current_message.message
+        message_sender = current_message.from_user
+        message_sender_unregistered = current_message.from_unregistered_user
+
+        if current_message.from_user:
+            send_message = Messages.objects.create(
+                title=title,
+                message=message_text,
+                to_user=current_message.from_user,
+                from_user=user,
+            )
+            send_message.save()
+            success_message = 'Message sent successfully'
+
+            ctx = {
+                'success_message': success_message,
+                'current_message': current_message,
+                'message': message_from_user,
+                'sender': message_sender,
+            }
+
+            return render(request, 'sell_it_app/message.html', ctx)
+
+        elif current_message.from_unregistered_user:
+            error_message = "You can't send message to unregistered user!"
+
+            ctx = {
+                'error_message': error_message,
+                'current_message': current_message,
+            }
+            return render(request, 'sell_it_app/message.html', ctx)
 
 
 class AddListingView(View):

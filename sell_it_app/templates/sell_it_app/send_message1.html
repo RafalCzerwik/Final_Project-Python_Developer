@@ -3,25 +3,12 @@
 {% block title %}Send message{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h5 style="font-size: x-large; font: bold; margin-bottom: 10px; margin-top: 20px;">Message title</h5>
-    <div class="row">
-        <div class="col-md-8" style="border: 1px solid #e0dfdf; border-radius: 10px; margin-bottom: 10px; margin-top: 10px; margin-left: 10px;">
-            <div class="title" style="margin-bottom: 5px; margin-top: 5px; margin-left: 5px;">
-                <span><b>From:</b>Nick</span>
-            </div>
-            <div class="message" style="margin-left: 5px; margin-bottom: 10px;">
-                <span><b>Message:</b>Tekst</span>
-            </div>
-        </div>
-    </div>
-</div>
 <div class="container" style="margin-top: 30px;">
     <h5 style="font-size: x-large; font: bold; margin-bottom: 20px;">Send message</h5>
 </div>
 <div class="container" style="margin-top: 20px; border-radius: 10px; border: 1px solid #e0dfdf;">
     <div class="row">
-          <!-- <div class="col-md-5" style="margin-top: 20px;">
+          <div class="col-md-5" style="margin-top: 20px;">
               <div class="input-group d-flex">
                 <span class="input-group-text" id="basic-addon1">From</span>
                 <input type="email" class="form-control" placeholder="name@example.com" aria-label="From">
@@ -32,16 +19,16 @@
                   <span class="input-group-text" id="basic-addon1">To</span>
                   <input type="email" class="form-control" placeholder="name@example.com" aria-label="To">
               </div>
-          </div> -->
+          </div>
         <div class="input-group mb-3" style="margin-top: 20px;">
               <span class="input-group-text" id="basic-addon1">Title</span>
-              <input type="text" class="form-control" value='title' placeholder="Enter title here" aria-label="Title" aria-describedby="basic-addon1">
+              <input type="text" class="form-control" placeholder="Enter title here" aria-label="Title" aria-describedby="basic-addon1">
             </div>
     </div>
     <div class="row">
         <div class="input-group" style="margin-bottom: 20px;">
           <span class="input-group-text">Message</span>
-          <textarea class="form-control" value='message' aria-label="With textarea"></textarea>
+          <textarea class="form-control" aria-label="With textarea"></textarea>
         </div>
         <div class="col-md-6">
             <div class="input-group" style="margin-bottom: 20px;">
@@ -61,15 +48,6 @@
                 </svg>
                 Send message</button>
         </div>
-        {% if error_message %}
-            <div class="alert alert-danger">
-                {{ error_message }}
-            </div>
-            {% elif success_message %}
-            <div class="alert alert-success">
-                {{ success_message }}
-            </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}

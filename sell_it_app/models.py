@@ -140,6 +140,9 @@ class Messages(models.Model):
     date_sent = models.DateTimeField(auto_now_add=True)
     status = models.CharField(choices=STATUS_CHOICES, default='Unread')
 
+    def __str__(self):
+        return self.title, self.from_unregistered_user
+
 
 class Picture(models.Model):
     """

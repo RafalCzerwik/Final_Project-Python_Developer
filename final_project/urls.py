@@ -38,7 +38,8 @@ from sell_it_app.views import (IndexView,
                                AboutUsView,
                                PublicProfileView,
                                MessageStatusUpdateView,
-                               MessageDeleteView)
+                               MessageDeleteView,
+                               ShowMessageView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -56,10 +57,11 @@ urlpatterns = [
     path('message/update-status/<int:message_id>', MessageStatusUpdateView.as_view(), name='message-update-status'),
     path('message/delete/<int:message_id>', MessageDeleteView.as_view(), name='message-delete'),
     path('add-listing/', AddListingView.as_view(), name='add-listing'),
-    path('send-message/', SendMessageView.as_view(), name='send-message'),
+    path('send-message/<int:message_id>/', SendMessageView.as_view(), name='send-message'),
+    path('show-message/<int:message_id>/', ShowMessageView.as_view(), name='show-message'),
     path('contact/', ContactUsView.as_view(), name='contact'),
     path('about-us/', AboutUsView.as_view(), name='about-us'),
-    path('listing-details/', ListingView.as_view(), name='listing-details'), #  <int:id>/
+    path('listing-details/', ListingView.as_view(), name='listing-details'),  # <int:id>/
     path('address/', MyAddressView.as_view(), name='address'),
     path('payments/', PaymentsView.as_view(), name='payments'),
     path('favourites/', FavouritesView.as_view(), name='favourites'),
