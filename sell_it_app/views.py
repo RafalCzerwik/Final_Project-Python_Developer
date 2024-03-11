@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
+from sell_it_app.forms import AvatarForm
 from sell_it_app.models import Messages, Newsletter, Avatars
 
 User = get_user_model()
@@ -88,12 +89,28 @@ class RegisterView(View):
 
 class DashboardView(View):
     def get(self, request):
-        return render(request, 'sell_it_app/dashboard.html')
+        avatar = Avatars.objects.filter(user_id=request.user).last()
+        return render(request, 'sell_it_app/dashboard.html', {'avatar': avatar})
 
 
 class ProfileView(View):
     def get(self, request):
-        return render(request, 'sell_it_app/profile.html')
+        avatar = Avatars.objects.filter(user_id=request.user).last()
+        form = AvatarForm()
+        return render(request, 'sell_it_app/profile.html', {'avatar': avatar, 'form': form})
+
+    def post(self, request):
+        form = AvatarForm(request.POST, request.FILES)
+        avatar = Avatars.objects.filter(user_id=request.user).first()
+        user = request.user
+        if form.is_valid():
+            avatar = form.save(commit=False)
+            avatar.user_id = user
+            avatar.save()
+            return redirect('profile')
+        else:
+            form = AvatarForm()
+        return render(request, 'sell_it_app/profile.html', {'form': form, 'avatar': avatar})
 
 
 class PublicProfileView(View):
@@ -327,12 +344,12 @@ class NewsletterView(View):
         return redirect('newsletter')
 
 
-class UpdateAvatarView(View):
-    def post(self, request, ):
-        file = request.FILES.get('file')
-
-        if file:
-            user = request.user
-            avatar = Avatars.objects.create(avatar=file, user=user.id)
-            avatar.save()
-            return redirect('profile')
+# class UpdateAvatarView(View):
+#     def post(self, request):
+#         form = AvatarForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('profile')
+#         else:
+#             form = AvatarForm()
+#         return render(request, 'sell_it_app/profile.html', {'form': form})

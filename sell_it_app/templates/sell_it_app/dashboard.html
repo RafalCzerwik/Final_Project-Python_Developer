@@ -29,11 +29,16 @@
         border-radius: 50%;
         overflow: hidden;
         border: 1px solid black;
+        {% if avatar.avatar %}
+        background-image: url('{{ avatar.avatar.url }}');
+        {% else %}
+        background-image: url('/static/images/CV.jpeg');
+        {% endif %}
     }
     </style>
     <div class="row">
         <div class="col-md-2">
-            <div class="round-image" style="background-image: url('/static/images/CV.jpeg');"></div>
+            <div class="round-image"></div>
         </div>
         <div class="col-md-10">
             <span style="font-size: xx-large; font: aptos"><b>{{ user.get_full_name }}</b></span>

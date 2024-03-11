@@ -168,7 +168,7 @@ class Avatars(models.Model):
         """
 
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(upload_to='static/images/avatars/',
+    avatar = models.ImageField(upload_to='uploads/avatars/',
                                validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
 
 

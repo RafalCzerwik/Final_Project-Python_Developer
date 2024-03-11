@@ -9,6 +9,8 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col" style="border: 1px solid #e0dfdf; border-radius: 10px;">
+            <form  method="post" enctype="multipart/form-data">
+            {% csrf_token %}
             <div class="container" style="background-color: #ffffff; margin-top: 20px; margin-bottom: 20px; border-radius: 20px;">
                     <div class="col" style="margin-bottom: 20px;">
                             <style>
@@ -20,16 +22,22 @@
                                 border-radius: 50%;
                                 overflow: hidden;
                                 border: 1px solid black;
+                                {% if avatar.avatar %}
+                                background-image: url('{{ avatar.avatar.url }}');
+                                {% else %}
+                                background-image: url('/static/images/CV.jpeg');
+                                {% endif %}
                             }
                             </style>
-                        <div class="col-md-2">
-                            <div class="round-image" style="background-image: url('/static/images/CV.jpeg');"></div>
+                        <div class="col-md-2"></div>
+                            <div class="round-image"></div>
                         </div>
                         <div class="col-md-4" style="margin-top: 20px;">
                             <label for="first-name" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Change profile picture</b></label>
-                            <form  method="post" enctype="multipart/form-data">
-                                {% csrf_token %}
-                            <div class="input-group">
+                                {{ form.as_p }}
+                                <button type="submit">Upload</button>
+
+                            <!--<div class="input-group">
                               <input type="file" name='file' class="form-control" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
                               <button class="btn btn-primary" type="submit" id="inputGroupFileAddon04">
                                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-upload" viewBox="0 0 16 16">
@@ -37,15 +45,17 @@
                                 <path fill-rule="evenodd" d="M7.646 4.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V14.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708z"/>
                               </svg> Upload</button>
                             </div>
-                            </form>
+
                         </div>
                         <div class="info" style="margin-top: -20px;">
                             <span style="font-size: small; margin-left: 5px; margin-top: 20px; margin-bottom: 20px;">
                                 <br>Max filesize is 1MB.
                             </span>
-                        </div>
+                        </div>-->
                     </div>
                     </div>
+            </div>
+            </form>
                     <label for="first-name" class="sr-only" style="font-size: medium; margin-bottom: 10px;"><b>First Name</b></label>
                     <input type="text" id="first-name" name="first_name" class="form-control mb-3" placeholder="{{ user.first_name }}" autofocus>
 
