@@ -169,6 +169,16 @@ class MessagesView(LoginRequiredMixin, View):
             user_read_messages = Messages.objects.filter(to_user_id=id).filter(status='Read').count()
             user_sent_messages = Messages.objects.filter(from_user_id=id).count()
 
+            message_type = request.GET.get('message_type')
+            if message_type == 'All':
+                messages = Messages.objects.filter(to_user=id).order_by('-id')
+            elif message_type == 'Unread':
+                messages = Messages.objects.filter(to_user_id=id).filter(status='Unread').order_by('-date_sent')
+            elif message_type == 'Read':
+                messages = Messages.objects.filter(to_user_id=id).filter(status='Read').order_by('-date_sent')
+            elif message_type == 'Sent':
+                messages = Messages.objects.filter(from_user_id=id).order_by('-date_sent')
+
             ctx = {
                 'user_messages': user_messages,
                 'user_unread_messages': user_unread_messages,

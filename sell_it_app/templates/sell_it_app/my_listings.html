@@ -71,23 +71,33 @@
         </div>
     </div>
 </div>
-<div class="paginator d-flex align-items-center justify-content-center" style="margin-top: 20px;">
-<nav aria-label="Page navigation example">
-  <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  </ul>
-</nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="paginator d-flex align-items-center justify-content-center" style="margin-top: 20px;">
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination d-flex justify-content-center">
+                      {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?search_query={{ request.GET.search_query }}&page=1" aria-label="First">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                      <li class="page-item"><a class="page-link" href="?search_query={{ request.GET.search_query }}&page={{ page_obj.previous_page_number }}">Previous</a></li>
+                      {% endif %}
+                      <li class="page-item"><a class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+                      {% if page_obj.has_next %}
+                      <li class="page-item"><a class="page-link" href="?search_query={{ request.GET.search_query }}&page={{ page_obj.next_page_number }}">Next</a></li>
+                          <li class="page-item">
+                              <a class="page-link" href="?search_query={{ request.GET.search_query }}&page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;</span>
+                              </a>
+                          </li>
+                      {% endif %}
+                  </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
