@@ -91,7 +91,7 @@ class Listings(models.Model):
 
     OFFER_CHOICES = (
         ('Sell', 'Sell'),
-        ('Buy', 'But'),
+        ('Buy', 'Buy'),
         ('For Free', 'For free'),
     )
 

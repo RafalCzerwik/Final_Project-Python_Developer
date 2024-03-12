@@ -1,3 +1,5 @@
+import random
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -5,14 +7,25 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from sell_it_app.forms import AvatarForm
-from sell_it_app.models import Messages, Newsletter, Avatars, Listings
+from sell_it_app.models import Messages, Newsletter, Avatars, Listings, Category
 
 User = get_user_model()
 
 
 class IndexView(View):
     def get(self, request):
-        return render(request, 'sell_it_app/index.html')
+        promoted_listings = list(Listings.objects.filter(promotion='Promoted').order_by('-add_date'))
+        random.shuffle(promoted_listings)
+        carousel = promoted_listings[:3]
+
+        last_added = Listings.objects.filter(promotion='Promoted').order_by('-add_date')[:6]
+
+        ctx = {
+            'promoted_listings': promoted_listings,
+            'last_added': last_added,
+            'carousel': carousel,
+        }
+        return render(request, 'sell_it_app/index.html', ctx)
 
 
 class LoginView(View):
@@ -253,7 +266,12 @@ class SendMessageView(LoginRequiredMixin, View):
 
 class AddListingView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, 'sell_it_app/add_listing.html')
+        categories = Category.objects.all()
+
+        ctx = {
+            'categories': categories,
+        }
+        return render(request, 'sell_it_app/add_listing.html', ctx)
 
 
 class ListingView(LoginRequiredMixin, View):
