@@ -169,7 +169,7 @@ class MessagesView(LoginRequiredMixin, View):
             user_read_messages = Messages.objects.filter(to_user_id=id).filter(status='Read').count()
             user_sent_messages = Messages.objects.filter(from_user_id=id).count()
 
-            message_type = request.GET.get('message_type')
+            message_type = request.GET.get('message_type', 'All')
             if message_type == 'All':
                 messages = Messages.objects.filter(to_user=id).order_by('-id')
             elif message_type == 'Unread':
@@ -179,12 +179,18 @@ class MessagesView(LoginRequiredMixin, View):
             elif message_type == 'Sent':
                 messages = Messages.objects.filter(from_user_id=id).order_by('-date_sent')
 
+            paginator = Paginator(messages, 5)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+
             ctx = {
                 'user_messages': user_messages,
                 'user_unread_messages': user_unread_messages,
                 'user_read_messages': user_read_messages,
                 'user_sent_messages': user_sent_messages,
-                'messages': messages,
+                'messages': page_obj,
+                # 'page_obj': page_obj,
+                'message_type': message_type,
             }
 
             return render(request, 'sell_it_app/messages.html', ctx)

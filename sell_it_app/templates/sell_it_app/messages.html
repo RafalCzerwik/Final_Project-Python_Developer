@@ -110,19 +110,19 @@
             <div class="paginator d-flex align-items-center justify-content-center" style="margin-top: 20px;">
                 <nav aria-label="Page navigation example">
                   <ul class="pagination d-flex justify-content-center">
-                      {% if page_obj.has_previous %}
+                      {% if messages.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?search_query={{ request.GET.search_query }}&page=1" aria-label="First">
+                                <a class="page-link" href="?page=1&message_type={{ message_type }}" aria-label="First">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
-                      <li class="page-item"><a class="page-link" href="?search_query={{ request.GET.search_query }}&page={{ page_obj.previous_page_number }}">Previous</a></li>
+                      <li class="page-item"><a class="page-link" href="?page={{ messages.previous_page_number }}&message_type={{ message_type }}">Previous</a></li>
                       {% endif %}
-                      <li class="page-item"><a class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
-                      {% if page_obj.has_next %}
-                      <li class="page-item"><a class="page-link" href="?search_query={{ request.GET.search_query }}&page={{ page_obj.next_page_number }}">Next</a></li>
+                      <li class="page-item"><a class="page-link">Page {{ messages.number }} of {{ messages.paginator.num_pages }}</a></li>
+                      {% if messages.has_next %}
+                      <li class="page-item"><a class="page-link" href="?page={{ messages.next_page_number }}&message_type={{ message_type }}">Next</a></li>
                           <li class="page-item">
-                              <a class="page-link" href="?search_query={{ request.GET.search_query }}&page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                              <a class="page-link" href="?page={{ messages.paginator.num_pages }}&message_type={{ message_type }}" aria-label="Last">
                                 <span aria-hidden="true">&raquo;</span>
                               </a>
                           </li>
