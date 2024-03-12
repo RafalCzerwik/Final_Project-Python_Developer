@@ -3,6 +3,7 @@ import random
 from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
@@ -135,9 +136,20 @@ class PublicProfileView(View):
 
 class SearchView(View):
     def get(self, request):
-        search_query = request.GET.get('search_query')
-        searching = Listings.objects.filter(title__icontains=search_query)
-        ctx = {'searching': searching}
+        query = request.GET.get('search_query')
+        searching = Listings.objects.filter(title__icontains=query).order_by('title')
+
+        if not searching.exists():
+            messages.error(request, 'No results found.')
+
+        paginator = Paginator(searching, 1)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        ctx = {
+            'searching': searching,
+            'page_obj': page_obj,
+        }
         return render(request, 'sell_it_app/search_results.html', ctx)
 
 

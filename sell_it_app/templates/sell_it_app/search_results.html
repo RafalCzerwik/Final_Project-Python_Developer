@@ -23,57 +23,56 @@
 </form>
 <div class="container">
     <div class="row">
-        <h5 style="font-size: x-large; font: bold; margin-bottom: 30px;">Results</h5>
-        {% for search in searching %}
-            {% if search %}
-            <div class="col-md-6 d-flex align-items-center" style="margin-bottom: 20px; margin-right: 10px; border-radius: 10px; border: 1px solid #e0dfdf;">
-                <img src="/static/images/briefcase-outline.svg" style="width: 80px; height: 80px; margin-right: 10px;">
-                <div class="col d-flex flex-column">
-                    <a href="#"><b>{{ search.title }}</b></a>
-                    <span style="font-size: small">{{ search.category_id.name }}</span>
-                    <span style="font-size: x-small">City</span>
+        {% if messages %}
+                {% for message in messages %}
+        <h5 class="error text-center" style="font-size: x-large; font: bold; margin-bottom: 30px;">{{ message }}</h5>
+                {% endfor %}
+            {% else %}
+            <h5 style="font-size: x-large; font: bold; margin-bottom: 30px;">Results</h5>
+            {% for search in page_obj %}
+                {% if search %}
+                <div class="col-md-6 d-flex align-items-center" style="margin-bottom: 20px; margin-right: 10px; border-radius: 10px; border: 1px solid #e0dfdf;">
+                    <img src="/static/images/briefcase-outline.svg" style="width: 80px; height: 80px; margin-right: 10px;">
+                    <div class="col d-flex flex-column">
+                        <a href="#"><b>{{ search.title }}</b></a>
+                        <span style="font-size: small">{{ search.category_id.name }}</span>
+                        <span style="font-size: x-small">City</span>
+                    </div>
                 </div>
-            </div>
-            {% endif %}
-        {% endfor %}
-
-
-
-        <!-- <div class="col-md-6 d-flex align-items-center" style="margin-bottom: 20px; margin-right: 10px; border-radius: 10px; border: 1px solid #e0dfdf;">
-            <img src="/static/images/briefcase-outline.svg" style="width: 80px; height: 80px; margin-right: 10px;">
-            <div class="col d-flex flex-column">
-                <a href="#"><b>Product name</b></a>
-                <span style="font-size: small">Category</span>
-                <span style="font-size: x-small">City</span>
-            </div>
-        </div>
-        <div class="col-md-6 d-flex align-items-center" style="margin-bottom: 20px; margin-right: 10px; border-radius: 10px; border: 1px solid #e0dfdf;">
-            <img src="/static/images/briefcase-outline.svg" style="width: 80px; height: 80px; margin-right: 10px;">
-            <div class="col d-flex flex-column">
-                <a href="#"><b>Product name</b></a>
-                <span style="font-size: small">Category</span>
-                <span style="font-size: x-small">City</span>
-            </div>
-        </div> -->
+                {% endif %}
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
-<div class="paginator d-flex align-items-center justify-content-center" style="margin-top: 20px;">
-<nav aria-label="Page navigation example">
-  <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  </ul>
-</nav>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="paginator d-flex align-items-center justify-content-center" style="margin-top: 20px;">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination d-flex justify-content-center">
+                  {% if page_obj.has_previous %}
+                    <!--<li class="page-item">
+                        <a class="page-link" href="?search_query={{ request.GET.search_query }}&page=1" aria-label="First"></a>-->
+                        <li class="page-item">
+                        <a class="page-link" href="?search_query={{ request.GET.search_query }}&page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                  {% endif %}
+                    <li class="page-item"><a class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+                  {% if page_obj.has_next %}
+                  <li class="page-item">
+                      <a class="page-link" href="?search_query={{ request.GET.search_query }}&page={{ page_obj.next_page_number }}" aria-label="Next">
+                  <!--<li class="page-item">
+                  <a class="page-link" href="?search_query={{ request.GET.search_query }}&page={{ page_obj.paginator.num_pages }}" aria-label="Last">-->
+                      <span aria-hidden="true">&raquo;</span>
+                      </a>
+                  </li>
+                  {% endif %}
+              </ul>
+            </nav>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
