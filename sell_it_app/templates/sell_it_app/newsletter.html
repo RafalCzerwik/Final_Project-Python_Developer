@@ -6,7 +6,13 @@
 <div class="container">
     <div class="row text-center" style="margin-top: 100px;">
         <div class="text" style="font-size: xx-large">
-            <span>Thanks for subscribing newsletter!</span>
+            {% if messages %}
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            {% else %}
+                <span>Thanks for subscribing newsletter!</span>
+            {% endif %}
         </div>
         <div class="redirect" style="font-size: large; margin-top: 10px;">
             <span><a href="{% url 'index' %}">Back to main page</a></span>

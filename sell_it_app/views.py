@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
@@ -341,8 +342,12 @@ class NewsletterView(View):
 
     def post(self, request):
         email = request.POST.get('email')
+        registered_email = Newsletter.objects.filter(email=email).last()
 
-        if email:
+        if registered_email:
+            messages.error(request, 'Email already registered!')
+            return redirect('newsletter')
+        else:
             subscribe = Newsletter.objects.create(email=email)
 
         return redirect('newsletter')
