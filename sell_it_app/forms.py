@@ -1,6 +1,6 @@
 from django import forms
 
-from sell_it_app.models import Avatars
+from sell_it_app.models import Avatars, Listings, Picture, Address
 
 
 class AvatarForm(forms.ModelForm):
@@ -9,13 +9,19 @@ class AvatarForm(forms.ModelForm):
         fields = ['avatar']
 
 
-class PicturesForm(forms.ModelForm):
-    pass
+class PictureForm(forms.ModelForm):
+    class Meta:
+        model = Picture
+        fields = ['image']
 
 
 class AddressesForm(forms.ModelForm):
-    pass
+    class Meta:
+        model = Address
+        fields = ['street_name', 'street_name_secondary', 'city', 'postal_code']
 
 
-class ListingsForm(forms.Form):
-    pass
+class ListingsForm(forms.ModelForm):
+    class Meta:
+        model = Listings
+        fields = ['category_id', 'title', 'description', 'price', 'condition', 'offer_type']

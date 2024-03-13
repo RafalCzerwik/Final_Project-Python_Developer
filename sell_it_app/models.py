@@ -45,6 +45,7 @@ class Address(models.Model):
     """
 
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    listings = models.ManyToManyField(Listings)
     street_name = models.CharField(max_length=255)
     street_name_secondary = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=50)
@@ -159,7 +160,7 @@ class Picture(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     listing_id = models.ForeignKey(Listings, on_delete=models.CASCADE)
     name = models.CharField(max_length=20)
-    image = models.ImageField(upload_to='static/images/user-images/',
+    image = models.ImageField(upload_to='uploads/listing_pictures/',
                               validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
 
 
