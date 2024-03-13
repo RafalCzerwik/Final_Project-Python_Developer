@@ -232,7 +232,28 @@ class EditListingView(LoginRequiredMixin, View):
         })
 
     def post(self, request, listing_id):
-        pass
+        listing = get_object_or_404(Listings, pk=listing_id)
+        listing_form = ListingsForm(request.POST, instance=listing)
+        address_form = AddressesForm(request.POST, instance=listing.address_id)
+
+        if listing_form.is_valid() and address_form.is_valid():
+            address = address_form.save(commit=False)
+            address.user_id = request.user
+            address.save()
+
+            listing = listing_form.save(commit=False)
+            listing.user = request.user
+            listing.address_id = address
+            listing.save()
+
+            messages.success(request, 'Listing details updated successfully!')
+            return redirect('edit-listing', listing_id=listing.id)
+
+        else:
+            print(listing_form.errors)
+            print(address_form.errors)
+            print(request.user)
+            return render(request, 'sell_it_app/edit_listing.html', {'listing': listing})
 
 
 class EditListingPictureView(LoginRequiredMixin, View):
