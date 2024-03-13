@@ -41,7 +41,10 @@ from sell_it_app.views import (IndexView,
                                MessageStatusUpdateView,
                                MessageDeleteView,
                                ShowMessageView,
-                               NewsletterView)
+                               NewsletterView,
+                               EditListingView,
+                               EditListingPictureView,
+                               DeleteListingView)
 
 
 urlpatterns = [
@@ -55,15 +58,18 @@ urlpatterns = [
     path('public-profile/', PublicProfileView.as_view(), name='public-profile'),
     path('search/', SearchView.as_view(), name='search'),
     path('listings/', MyListingsView.as_view(), name='listings'),
+    path('listing-details/<int:listing_id>/', ListingView.as_view(), name='listing-details'),
+    path('add-listing/', AddListingView.as_view(), name='add-listing'),
+    path('edit-listing/<int:listing_id>/', EditListingView.as_view(), name='edit-listing'),
+    path('edit-listing/<int:listing_id>/picture/', EditListingPictureView.as_view(), name='edit-listing-picture'),
+    path('delete-listing/<int:listing_id>/', DeleteListingView.as_view(), name='delete-listing'),
     path('messages/', MessagesView.as_view(), name='messages'),
     path('message/update-status/<int:message_id>', MessageStatusUpdateView.as_view(), name='message-update-status'),
     path('message/delete/<int:message_id>', MessageDeleteView.as_view(), name='message-delete'),
-    path('add-listing/', AddListingView.as_view(), name='add-listing'),
     path('send-message/<int:message_id>/', SendMessageView.as_view(), name='send-message'),
     path('show-message/<int:message_id>/', ShowMessageView.as_view(), name='show-message'),
     path('contact/', ContactUsView.as_view(), name='contact'),
     path('about-us/', AboutUsView.as_view(), name='about-us'),
-    path('listing-details/<int:listing_id>/', ListingView.as_view(), name='listing-details'),
     path('address/', MyAddressView.as_view(), name='address'),
     path('payments/', PaymentsView.as_view(), name='payments'),
     path('favourites/', FavouritesView.as_view(), name='favourites'),

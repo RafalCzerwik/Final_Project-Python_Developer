@@ -8,13 +8,14 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from sell_it_app.forms import AvatarForm, ListingsForm, AddressesForm, PictureForm
-from sell_it_app.models import Messages, Newsletter, Avatars, Listings, Category, Picture
+from sell_it_app.models import Messages, Newsletter, Avatars, Listings, Category, Picture, Address
 
 User = get_user_model()
 
 
 class IndexView(View):
     def get(self, request):
+        #promoted_listings = list(Listings.objects.filter(promotion='Promoted').order_by('-add_date'))
         promoted_listings = list(Listings.objects.filter(promotion='Promoted').order_by('-add_date'))
         random.shuffle(promoted_listings)
         carousel = promoted_listings[:3]
@@ -214,6 +215,52 @@ class AddListingView(LoginRequiredMixin, View):
         else:
             error_message = 'Error! Please check and try again!'
             return render(request, 'sell_it_app/add_listing.html', {'error_message': error_message})
+
+
+class EditListingView(LoginRequiredMixin, View):
+    def get(self, request, listing_id):
+        listing = get_object_or_404(Listings, pk=listing_id)
+        categories = Category.objects.all()
+        address = Address.objects.get(id=listing.address_id.id)
+        picture = Picture.objects.get(listing_id=listing.id)
+
+        return render(request, 'sell_it_app/edit_listing.html', {
+            'listing': listing,
+            'categories': categories,
+            'address': address,
+            'picture': picture,
+        })
+
+    def post(self, request, listing_id):
+        pass
+
+
+class EditListingPictureView(LoginRequiredMixin, View):
+    def get(self, request, listing_id):
+        listing = get_object_or_404(Listings, pk=listing_id)
+        return render(request, 'sell_it_app/edit_listing.html', {'listing': listing})
+
+    def post(self, request, listing_id):
+        listing = get_object_or_404(Listings, pk=listing_id)
+        picture_form = PictureForm(request.POST, request.FILES)
+
+        if picture_form.is_valid():
+            existing_picture = Picture.objects.get(listing_id=listing.id, user_id=request.user)
+            existing_picture.delete()
+            picture = picture_form.save(commit=False)
+            picture.listing_id = listing.id
+            picture.user_id = request.user
+            picture.save()
+
+            messages.success(request, 'Picture uploaded successfully!')
+            return redirect('edit-listing', listing.id)
+
+        return render(request, 'sell_it_app/edit_listing.html', {'listing': listing})
+
+
+class DeleteListingView(LoginRequiredMixin, View):
+    def post(self, request, listing_id):
+        pass
 
 
 class MessagesView(LoginRequiredMixin, View):
