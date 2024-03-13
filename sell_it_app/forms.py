@@ -18,7 +18,7 @@ class PictureForm(forms.ModelForm):
 class AddressesForm(forms.ModelForm):
     class Meta:
         model = Address
-        fields = ['street_name', 'street_name_secondary', 'city', 'postal_code']
+        fields = ['street_name', 'street_name_secondary', 'city', 'postal_code', 'country']
 
 
 class ListingsForm(forms.ModelForm):

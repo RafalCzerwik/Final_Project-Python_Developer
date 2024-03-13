@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from sell_it_app.forms import AvatarForm, ListingsForm, AddressesForm, PictureForm
-from sell_it_app.models import Messages, Newsletter, Avatars, Listings, Category
+from sell_it_app.models import Messages, Newsletter, Avatars, Listings, Category, Picture
 
 User = get_user_model()
 
@@ -18,7 +18,6 @@ class IndexView(View):
         promoted_listings = list(Listings.objects.filter(promotion='Promoted').order_by('-add_date'))
         random.shuffle(promoted_listings)
         carousel = promoted_listings[:3]
-
         last_added = Listings.objects.filter(promotion='Not promoted').order_by('-add_date')[:6]
 
         ctx = {
@@ -158,6 +157,14 @@ class MyListingsView(LoginRequiredMixin, View):
         return render(request, 'sell_it_app/my_listings.html')
 
 
+class ListingView(LoginRequiredMixin, View):
+    def get(self, request, listing_id):
+        listing = get_object_or_404(Listings, pk=listing_id)
+        avatar = Avatars.objects.filter(user_id=request.user).last()
+        picture = Picture.objects.get(listing=listing_id)
+        return render(request, 'sell_it_app/listing.html', {'listing': listing, 'avatar': avatar, 'picture': picture})
+
+
 class AddListingView(LoginRequiredMixin, View):
     def get(self, request):
         categories = Category.objects.all()
@@ -174,9 +181,19 @@ class AddListingView(LoginRequiredMixin, View):
 
         ctx = {}
 
+        if address_form.is_valid():
+            address = address_form.save(commit=False)
+            address.user_id = request.user
+            # address.listing_id = listing
+            address.save()
+            ctx['address'] = address
+        else:
+            print("Address form errors:", address_form.errors)
+
         if listing_form.is_valid():
             listing = listing_form.save(commit=False)
             listing.user_id = request.user
+            listing.address_id = address
             listing.save()
             ctx['listing'] = listing
         else:
@@ -185,23 +202,15 @@ class AddListingView(LoginRequiredMixin, View):
         if picture_form.is_valid():
             pictures = picture_form.save(commit=False)
             pictures.user_id = request.user
-            pictures.listing_id = listing
+            pictures.listing = listing
             pictures.save()
             ctx['pictures'] = pictures
         else:
             print("Picture form errors:", picture_form.errors)
 
-        if address_form.is_valid():
-            address = address_form.save(commit=False)
-            address.user_id = request.user
-            address.listing_id = listing
-            address.save()
-            ctx['address'] = address
-        else:
-            print("Address form errors:", address_form.errors)
-
         if listing_form.is_valid() and picture_form.is_valid() and address_form.is_valid():
-            return render(request, 'sell_it_app/listing-details.html', ctx)
+            # return render(request, 'sell_it_app/listing.html', ctx)
+            return redirect('listing-details', listing_id=listing.id)
         else:
             error_message = 'Error! Please check and try again!'
             return render(request, 'sell_it_app/add_listing.html', {'error_message': error_message})
@@ -339,11 +348,6 @@ class SendMessageView(LoginRequiredMixin, View):
                 'title': message_title,
             }
             return render(request, 'sell_it_app/message.html', ctx)
-
-
-class ListingView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, 'sell_it_app/listing.html')
 
 
 class MyAddressView(LoginRequiredMixin, View):

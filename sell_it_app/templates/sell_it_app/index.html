@@ -208,7 +208,7 @@
                   {% for caro in carousel %}
                     {% if caro %}
                       <div class="carousel-item active">
-                      <img src="static/images/cubicle_door.jpeg" class="d-block w-100" alt="..." style="border-radius: 20px">
+                      <img src="{{ caro.image.url }}" class="d-block w-100" alt="..." style="border-radius: 20px">
                       <div class="carousel-caption d-none d-md-block">
                         <h3><b>{{ caro.title }}</b></h3>
                         <h5>{{ caro.category_id.name }}</h5>
