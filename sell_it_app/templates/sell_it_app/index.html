@@ -207,13 +207,17 @@
               <div class="carousel-inner">
                   {% for caro in carousel %}
                     {% if caro %}
+                    {% if caro.pictures.first %}
                       <div class="carousel-item active">
-                      <img src="{{ caro.image.url }}" class="d-block w-100" alt="..." style="border-radius: 20px">
+                          <div style="display: flex; justify-content: center; overflow: hidden;">
+                      <img src="{{ caro.pictures.first.image.url }}" class="d-block w-40" alt="..." style="object-fit: cover; border-radius: 20px">
                       <div class="carousel-caption d-none d-md-block">
                         <h3><b>{{ caro.title }}</b></h3>
                         <h5>{{ caro.category_id.name }}</h5>
                       </div>
+                          </div>
                     </div>
+                  {% endif %}
                     {% else %}
                     <div class="carousel-item active">
                       <img src="static/images/cubicle_door.jpeg" class="d-block w-100" alt="..." style="border-radius: 20px">
@@ -301,7 +305,7 @@
     {% for listing in last_added %}
         <div class="col-md-4 text-center">
             <div class="card-body position-relative">
-                <img src="static/images/demo.jpeg" alt="Ad 1" class="card-img-top w-50" style="border-radius: 20px; border: 2px solid #999999">
+                <img src="{{ listing.pictures.first.image.url }}" alt="Ad 1" class="card-img-top w-50" style="border-radius: 20px; border: 2px solid #999999">
                 <div class="overlay-text">
                     <p class="city-name position-absolute bottom-5 translate-middle" style="left: 33%; transform: translateX(-20%); font-size: 12px; margin-bottom: 5px; margin-top: 10px;">City name</p>
                     <h5 class="card-title position-absolute bottom-10 translate-middle" style="left: 38%; transform: translateX(-20%); margin-top: 30px; margin-bottom: 40px;">{{ listing.title }}</h5>

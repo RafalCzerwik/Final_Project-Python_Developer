@@ -159,7 +159,7 @@ class Picture(models.Model):
         """
 
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    listing = models.ForeignKey(Listings, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name='pictures')
     name = models.CharField(max_length=20)
     image = models.ImageField(upload_to='uploads/listing_pictures/',
                               validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])

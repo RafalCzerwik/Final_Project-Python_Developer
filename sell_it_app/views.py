@@ -18,7 +18,7 @@ class IndexView(View):
         promoted_listings = list(Listings.objects.filter(promotion='Promoted').order_by('-add_date'))
         random.shuffle(promoted_listings)
         carousel = promoted_listings[:3]
-        last_added = Listings.objects.filter(promotion='Not promoted').order_by('-add_date')[:6]
+        last_added = Listings.objects.all().order_by('-add_date')[:6]
 
         ctx = {
             'promoted_listings': promoted_listings,
