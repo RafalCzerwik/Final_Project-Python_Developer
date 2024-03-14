@@ -53,25 +53,39 @@
             <div class="d-flex justify-content-center">
                 <div class="col-md-3 d-flex justify-content-center align-items-center">
                     {% if messages %}
-                            <div class="alert alert-success" role="alert" style="margin-top: 20px;">
-                                {% for message in messages %}
-                                {{ message }}
+                    <div class="alert alert-success" role="alert" style="margin-top: 20px;">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    {{ error }}
                                 {% endfor %}
-                            </div>
-                            {% endif %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                    </div>
+                {% endif %}
                 </div>
             </div>
+            <form action="{% url 'update-password' %}" method="post">
+                {% csrf_token %}
             <label for="password" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>New password</b></label>
-            <input type="password" id="password" name="password" class="form-control mb-3" placeholder="Password">
+            <input type="password" id="password" name="new_password" class="form-control mb-3" placeholder="Password">
 
             <label for="password-confirm" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Confirm new password</b></label>
-            <input type="password" id="password-confirm" name="password_confirm" class="form-control mb-3" placeholder="Confirm Password">
+            <input type="password" id="password-confirm" name="new_password_confirm" class="form-control mb-3" placeholder="Confirm Password">
             <div class="col-md-3 justify-content-center" style="margin-bottom: 20px; margin-top: 30px;">
                         <div class="d-grid gap-2">
                             <button class="btn btn-primary" type="submit">Update password</button>
                         </div>
                     </div>
-
+            </form>
             <form action="{% url 'update-profile' %}" method="post">
                 {% csrf_token %}
                 <fieldset class="form-group mb-3">

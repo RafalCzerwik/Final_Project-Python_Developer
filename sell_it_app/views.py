@@ -1,13 +1,13 @@
 import random
 
 from django.contrib import messages
-from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.contrib.auth import get_user_model, authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
-from sell_it_app.forms import AvatarForm, ListingsForm, AddressesForm, PictureForm, ProfileForm
+from sell_it_app.forms import AvatarForm, ListingsForm, AddressesForm, PictureForm, ProfileForm, PasswordForm
 from sell_it_app.models import Messages, Newsletter, Avatars, Listings, Category, Picture, Address
 
 User = get_user_model()
@@ -137,7 +137,21 @@ class UpdateProfileView(LoginRequiredMixin, View):
 
 
 class UpdatePassword(LoginRequiredMixin, View):
-    pass
+    def post(self, request):
+        form = PasswordForm(request.POST)
+        avatar = Avatars.objects.filter(user_id=request.user).first()
+        user = request.user
+        if form.is_valid():
+            user = request.user
+            new_password = form.cleaned_data.get('new_password')
+            user.set_password(new_password)
+            user.save()
+
+            messages.success(request, 'Password updated successfully!')
+            update_session_auth_hash(request, user)
+            return redirect('profile')
+
+        return render(request, 'sell_it_app/profile.html', {'form': form, 'user': user, 'avatar': avatar})
 
 
 class UpdateProfileAvatarView(LoginRequiredMixin, View):

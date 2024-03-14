@@ -31,3 +31,17 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'gender', 'phone_number', 'date_of_birth']
+
+
+class PasswordForm(forms.Form):
+    new_password = forms.CharField(widget=forms.PasswordInput)
+    new_password_confirm = forms.CharField(widget=forms.PasswordInput)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        new_password = cleaned_data.get('new_password')
+        new_password_confirm = cleaned_data.get('new_password_confirm')
+
+        if new_password != new_password_confirm:
+            raise forms.ValidationError("Passwords don't match!")
+        return cleaned_data
