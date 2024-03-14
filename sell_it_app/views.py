@@ -176,8 +176,9 @@ class UpdateProfileAvatarView(LoginRequiredMixin, View):
         avatar = Avatars.objects.filter(user_id=request.user).first()
         user = request.user
         if form.is_valid():
-            existing_avatar = Avatars.objects.get(user_id=request.user)
-            existing_avatar.delete()
+            if avatar:
+                existing_avatar = Avatars.objects.get(user_id=request.user)
+                existing_avatar.delete()
             avatar = form.save(commit=False)
             avatar.user_id = user
             avatar.save()

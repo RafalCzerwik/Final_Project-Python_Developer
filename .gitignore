@@ -152,3 +152,4 @@ cython_debug/
 .idea/
 .DS_Store/
 media/uploads/avatars/
+.static/
