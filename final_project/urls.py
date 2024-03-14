@@ -49,7 +49,8 @@ from sell_it_app.views import (IndexView,
                                UpdateProfileAvatarView,
                                UpdateProfileView,
                                UpdatePassword,
-                               SendNewMessage)
+                               SendNewMessage,
+                               CategoryView)
 
 
 urlpatterns = [
@@ -59,6 +60,7 @@ urlpatterns = [
     path('logout/', LogOutView.as_view(), name='logout'),
     path('register/', RegisterView.as_view(), name='register'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('category/<int:category_id>/', CategoryView.as_view(), name='category'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/update-password/', UpdatePassword.as_view(), name='update-password'),
     path('update-profile/', UpdateProfileView.as_view(), name='update-profile'),

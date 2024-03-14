@@ -165,32 +165,32 @@
         <div class="col text-center" style="position: relative;">
             <ion-icon name="shirt-outline"></ion-icon>
             <p style="font-size: small">Market</p>
-            <a href="{% url 'index' %}" class="stretched-link"></a>
+            <a href="{% url 'category' 1 %}" class="stretched-link"></a>
         </div>
         <div class="col text-center" style="position: relative">
             <ion-icon name="home-outline"></ion-icon>
             <p style="font-size: small">Real estate</p>
-            <a href="{% url 'index' %}" class="stretched-link"></a>
+            <a href="{% url 'category' 2 %}" class="stretched-link"></a>
         </div>
         <div class="col text-center" style="position: relative">
             <ion-icon name="boat-outline"></ion-icon>
             <p style="font-size: small">Boat</p>
-            <a href="{% url 'index' %}" class="stretched-link"></a>
+            <a href="{% url 'category' 3 %}" class="stretched-link"></a>
         </div>
         <div class="col text-center" style="position: relative">
             <ion-icon name="bicycle-outline"></ion-icon>
             <p style="font-size: small">Motorcycle</p>
-            <a href="{% url 'index' %}" class="stretched-link"></a>
+            <a href="{% url 'category' 4 %}" class="stretched-link"></a>
         </div>
         <div class="col text-center" style="position: relative">
             <ion-icon name="car-sport-outline"></ion-icon>
             <p style="font-size: small">Car</p>
-            <a href="{% url 'index' %}" class="stretched-link"></a>
+            <a href="{% url 'category' 5 %}" class="stretched-link"></a>
         </div>
         <div class="col text-center" style="position: relative">
             <ion-icon name="briefcase-outline"></ion-icon>
             <p style="font-size: small">Work</p>
-            <a href="{% url 'index' %}" class="stretched-link"></a>
+            <a href="{% url 'category' 6 %}" class="stretched-link"></a>
         </div>
     </div>
 </main>
@@ -333,7 +333,8 @@
             <div class="card-body position-relative">
                 <img src="{{ listing.pictures.first.image.url }}" alt="Ad 1" class="card-img-top w-50" style="border-radius: 20px; border: 2px solid #999999">
                 <div class="overlay-text">
-                    <p class="city-name position-absolute bottom-5 translate-middle" style="left: 33%; transform: translateX(-20%); font-size: 12px; margin-bottom: 5px; margin-top: 10px;">City name</p>
+                    <p class="city-name position-absolute bottom-5 translate-middle" style="left: 33%; transform: translateX(-20%); font-size: 12px; margin-bottom: 5px; margin-top: 10px;">
+                        {{ listing.address_id.city }}</p>
                     <h5 class="card-title position-absolute bottom-10 translate-middle" style="left: 38%; transform: translateX(-20%); margin-top: 30px; margin-bottom: 40px;">{{ listing.title }}</h5>
                     <p class="price position-absolute bottom-0 translate-middle" style="left: 38%; transform: translateX(-40%); font-size: 16px; margin-bottom: -10px; padding: 5px;">${{ listing.price }}</p>
                 </div>

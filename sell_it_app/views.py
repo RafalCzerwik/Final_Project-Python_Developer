@@ -103,6 +103,22 @@ class RegisterView(View):
             return redirect('login')
 
 
+class CategoryView(View):
+    def get(self, request, category_id):
+        category = get_object_or_404(Category, id=category_id)
+        listings = Listings.objects.filter(category_id=category).order_by('-add_date')
+
+        paginator = Paginator(listings, 6)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        ctx = {
+            'category': category,
+            'listings': page_obj,
+        }
+        return render(request, 'sell_it_app/category.html', ctx)
+
+
 class DashboardView(LoginRequiredMixin, View):
     def get(self, request):
         avatar = Avatars.objects.filter(user_id=request.user).last()

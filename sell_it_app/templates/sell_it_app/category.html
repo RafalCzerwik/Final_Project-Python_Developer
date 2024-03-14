@@ -1,0 +1,128 @@
+{% extends 'sell_it_app/base.html' %}
+
+{% block title %}{{ category.name }}{% endblock %}
+
+{% block content %}
+<form action="{% url 'search' %}" method="get">
+<div class="container" style="margin-top: 40px; margin-bottom: 50px; background: white">
+    <div class="row justify-content-center" style="background: #ffffff">
+        <div class="col-md-10" style="background-color: white">
+                <form class="container-fluid" style="background: white">
+                    <div class="input-group" style="background: white">
+                        <input type="search" name="search_query" class="form-control" placeholder="Search in categories..." aria-label="Search" aria-describedby="basic-addon1" style="background: white">
+                        <button class="btn btn-outline-primary" type="submit" id="basic-addon1" style="background: white;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                            </svg>
+                            Search</button>
+                    </div>
+                </form>
+        </div>
+    </div>
+</div>
+</form>
+<div class="container">
+    <h5 style="font-size: x-large; font: bold; margin-bottom: 20px;">{{ category.name }}</h5>
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">All listings</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Sell</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Buy</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link">For free</a>
+              </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+            <style>
+        .overlay-text {
+            position: relative;
+        }
+        .overlay-text::after {
+            content: "";
+            display: block;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 40%;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
+        }
+
+        .overlay-text .city-name {
+            color: #000000;
+        }
+
+        .overlay-text .card-title {
+            margin-top: 5px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .overlay-text .price {
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+        .card-img-top {
+            border-radius: 10px; /* Lekkie zaokrąglenie krawędzi */
+            border: 1px solid #ddd; /* Szara obramówka */
+        }
+        .font-aptos {
+            font-family: 'Aptos', sans-serif;
+        }
+    </style>
+        {% for listing in listings %}
+        <div class="col-md-4 text-center" style="position: relative; margin-top: 40px;">
+            <div class="card-body position-relative">
+                <img src="{{ listing.pictures.first.image.url }}" alt="Ad 1" class="card-img-top w-60" style="border-radius: 20px; border: 2px solid #999999">
+                    <div class="overlay-text">
+                        <p class="city-name position-absolute bottom-5 translate-middle" style="left: 12%; transform: translateX(-20%); font-size: 14px; margin-bottom: 5px; margin-top: 15px;">{{ listing.address_id.city }}</p>
+                        <h5 class="card-title position-absolute bottom-10 translate-middle" style="font-size: x-large; left: 30%; transform: translateX(-20%); margin-top: 40px; margin-bottom: 40px;">{{ listing.title }}</h5>
+                        <p class="price position-absolute bottom-0 translate-middle" style="left: 50%; transform: translateX(-50%); font-size: 30px; margin-bottom: -20px; padding: 50px;">${{ listing.price }}</p>
+                    </div>
+                </div>
+            <a href="{% url 'listing-details' listing.id %}" class="stretched-link"></a>
+            </div>
+            {% if forloop.counter|divisibleby:3 and not forloop.last %}
+        </div>
+    <div class="row justify-content-center" style="margin-top: 60px;">
+        {% endif %}
+    {% endfor %}
+    </div>
+    <div class="row" style="margin-top: 70px;">
+        <div class="col-md-12">
+            <div class="paginator d-flex align-items-center justify-content-center" style="margin-top: 20px;">
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination d-flex justify-content-center">
+                      {% if listings.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1" aria-label="First">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                      <li class="page-item"><a class="page-link" href="?page={{ listings.previous_page_number }}">Previous</a></li>
+                      {% endif %}
+                      <li class="page-item"><a class="page-link">Page {{ listings.number }} of {{ listings.paginator.num_pages }}</a></li>
+                      {% if listings.has_next %}
+                      <li class="page-item"><a class="page-link" href="?page={{ listings.next_page_number }}">Next</a></li>
+                          <li class="page-item">
+                              <a class="page-link" href="?page={{ listings.paginator.num_pages }}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;</span>
+                              </a>
+                          </li>
+                      {% endif %}
+                  </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
