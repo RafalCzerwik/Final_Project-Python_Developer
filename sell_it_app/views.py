@@ -224,12 +224,18 @@ class MyListingsView(LoginRequiredMixin, View):
         })
 
 
-class ListingView(LoginRequiredMixin, View):
+class ListingView(View):
     def get(self, request, listing_id):
-        listing = get_object_or_404(Listings, pk=listing_id)
-        avatar = Avatars.objects.filter(user_id=request.user).last()
-        picture = Picture.objects.get(listing=listing_id)
-        return render(request, 'sell_it_app/listing.html', {'listing': listing, 'avatar': avatar, 'picture': picture})
+        user = request.user
+        if user.is_authenticated:
+            listing = get_object_or_404(Listings, pk=listing_id)
+            avatar = Avatars.objects.filter(user_id=request.user).last()
+            picture = Picture.objects.get(listing=listing_id)
+            return render(request, 'sell_it_app/listing.html', {'listing': listing, 'avatar': avatar, 'picture': picture})
+        else:
+            listing = get_object_or_404(Listings, pk=listing_id)
+            picture = Picture.objects.get(listing=listing_id)
+            return render(request, 'sell_it_app/listing.html', {'listing': listing, 'picture': picture})
 
 
 class AddListingView(LoginRequiredMixin, View):
@@ -502,6 +508,32 @@ class SendMessageView(LoginRequiredMixin, View):
                 'title': message_title,
             }
             return render(request, 'sell_it_app/message.html', ctx)
+
+
+class SendNewMessage(LoginRequiredMixin, View):
+    def get(self, request, listing_id):
+        listing = get_object_or_404(Listings, id=listing_id)
+        return render(request, 'sell_it_app/send_new_message.html', {'listing': listing})
+
+    def post(self, request, listing_id):
+        listing = get_object_or_404(Listings, id=listing_id)
+        sender = request.user.id
+        recipient = listing.user_id.id
+        message = request.POST.get('message')
+
+        if sender != recipient:
+            send_message = Messages.objects.create(
+                title=listing.title,
+                message=message,
+                from_user_id=sender,
+                to_user_id=recipient,
+                status='Unread',
+            )
+            messages.success(request, 'Your message has been sent successfully!')
+            return redirect('listing-details', listing_id=listing_id)
+        else:
+            messages.error(request, "You cannot send a message to yourself!")
+            return redirect('send-new-message', listing_id=listing_id)
 
 
 class MyAddressView(LoginRequiredMixin, View):

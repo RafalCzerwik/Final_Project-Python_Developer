@@ -63,7 +63,18 @@
         </div>
     </div>
     <div class="d-grid gap-2 col-2" style="margin-bottom: 20px;">
+        <a href="{% url 'send-new-message' listing.id %}">
       <button class="btn btn-outline-primary" type="button">Send message</button>
+            </a>
+    </div>
+    <div class="col-md-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
 </div>
 <div class="container" style="margin-top: 10px; margin-bottom: 10px; border-bottom: 1px solid #e0dfdf;">
