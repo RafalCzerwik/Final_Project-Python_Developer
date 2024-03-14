@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
-from sell_it_app.forms import AvatarForm, ListingsForm, AddressesForm, PictureForm
+from sell_it_app.forms import AvatarForm, ListingsForm, AddressesForm, PictureForm, ProfileForm
 from sell_it_app.models import Messages, Newsletter, Avatars, Listings, Category, Picture, Address
 
 User = get_user_model()
@@ -115,14 +115,43 @@ class ProfileView(LoginRequiredMixin, View):
         form = AvatarForm()
         return render(request, 'sell_it_app/profile.html', {'avatar': avatar, 'form': form})
 
+
+class UpdateProfileView(LoginRequiredMixin, View):
+    def get(self, request):
+        user = User.objects.get(id=request.user.id)
+        form = ProfileForm(instance=user)
+        return render(request, 'sell_it_app/profile.html', {'user': user, 'form': form})
+
+    def post(self, request):
+        user = User.objects.get(id=request.user.id)
+        form = ProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+        else:
+            print(form.errors)
+            messages.error(request, 'Error! Check your inputs!')
+
+        return render(request, 'sell_it_app/profile.html', {'form': form, 'user': user})
+
+
+class UpdatePassword(LoginRequiredMixin, View):
+    pass
+
+
+class UpdateProfileAvatarView(LoginRequiredMixin, View):
     def post(self, request):
         form = AvatarForm(request.POST, request.FILES)
         avatar = Avatars.objects.filter(user_id=request.user).first()
         user = request.user
         if form.is_valid():
+            existing_avatar = Avatars.objects.get(user_id=request.user)
+            existing_avatar.delete()
             avatar = form.save(commit=False)
             avatar.user_id = user
             avatar.save()
+            messages.success(request, 'Avatar updated successfully!')
             return redirect('profile')
         else:
             form = AvatarForm()
@@ -155,7 +184,30 @@ class SearchView(View):
 
 class MyListingsView(LoginRequiredMixin, View):
     def get(self, request):
-        return render(request, 'sell_it_app/my_listings.html')
+        all_listings = Listings.objects.filter(user_id=request.user.id).count()
+        listings = Listings.objects.filter(user_id=request.user.id).order_by('-add_date')
+        active_listings = Listings.objects.filter(user_id=request.user.id).filter(status='Active').count()
+        inactive_listings = Listings.objects.filter(user_id=request.user.id).filter(status='Inactive').count()
+
+        listings_type = request.GET.get('listings_type', 'All')
+        if listings_type == 'All':
+            listings = Listings.objects.filter(user_id=request.user.id).order_by('-add_date')
+        elif listings_type == 'Active':
+            listings = Listings.objects.filter(user_id=request.user.id).filter(status='Active').order_by('-add_date')
+        elif listings_type == 'Inactive':
+            listings = Listings.objects.filter(user_id=request.user.id).filter(status='Inactive').order_by('-add_date')
+
+        paginator = Paginator(listings, 5)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, 'sell_it_app/my_listings.html', {
+            'all_listings': all_listings,
+            'active_listings': active_listings,
+            'inactive_listings': inactive_listings,
+            'listings': page_obj,
+            'listings_type': listings_type,
+        })
 
 
 class ListingView(LoginRequiredMixin, View):
@@ -279,9 +331,29 @@ class EditListingPictureView(LoginRequiredMixin, View):
         return render(request, 'sell_it_app/edit_listing.html', {'listing': listing})
 
 
+class UpdateListingStatusView(LoginRequiredMixin, View):
+    def post(self, request, listing_id):
+        listing = get_object_or_404(Listings, pk=listing_id)
+
+        if listing.status == 'Active':
+            listing.status = 'Inactive'
+            listing.save()
+            return redirect('listings')
+
+        elif listing.status == 'Inactive':
+            listing.status = 'Active'
+            listing.save()
+            return redirect('listings')
+
+
 class DeleteListingView(LoginRequiredMixin, View):
     def post(self, request, listing_id):
-        pass
+        listing = get_object_or_404(Listings, id=listing_id)
+
+        if listing:
+            listing.delete()
+
+            return redirect('listings')
 
 
 class MessagesView(LoginRequiredMixin, View):

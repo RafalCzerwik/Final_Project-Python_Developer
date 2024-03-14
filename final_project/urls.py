@@ -44,7 +44,11 @@ from sell_it_app.views import (IndexView,
                                NewsletterView,
                                EditListingView,
                                EditListingPictureView,
-                               DeleteListingView)
+                               DeleteListingView,
+                               UpdateListingStatusView,
+                               UpdateProfileAvatarView,
+                               UpdateProfileView,
+                               UpdatePassword)
 
 
 urlpatterns = [
@@ -55,6 +59,9 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('profile/update-password/', UpdatePassword.as_view(), name='update_password'),
+    path('update-profile/', UpdateProfileView.as_view(), name='update-profile'),
+    path('update-profile/avatar/', UpdateProfileAvatarView.as_view(), name='update-profile-avatar'),
     path('public-profile/', PublicProfileView.as_view(), name='public-profile'),
     path('search/', SearchView.as_view(), name='search'),
     path('listings/', MyListingsView.as_view(), name='listings'),
@@ -62,6 +69,7 @@ urlpatterns = [
     path('add-listing/', AddListingView.as_view(), name='add-listing'),
     path('edit-listing/<int:listing_id>/', EditListingView.as_view(), name='edit-listing'),
     path('edit-listing/<int:listing_id>/picture/', EditListingPictureView.as_view(), name='edit-listing-picture'),
+    path('listing/update-status/<int:listing_id>/', UpdateListingStatusView.as_view(), name='update-listing-status'),
     path('delete-listing/<int:listing_id>/', DeleteListingView.as_view(), name='delete-listing'),
     path('messages/', MessagesView.as_view(), name='messages'),
     path('message/update-status/<int:message_id>', MessageStatusUpdateView.as_view(), name='message-update-status'),

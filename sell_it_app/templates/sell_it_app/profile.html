@@ -9,7 +9,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col" style="border: 1px solid #e0dfdf; border-radius: 10px;">
-            <form method="post" enctype="multipart/form-data">
+            <form action="{% url 'update-profile-avatar' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="container" style="background-color: #ffffff; margin-top: 20px; margin-bottom: 20px; border-radius: 20px;">
                     <div class="col" style="margin-bottom: 20px;">
@@ -42,7 +42,6 @@
                                 <path fill-rule="evenodd" d="M7.646 4.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V14.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708z"/>
                               </svg> Upload</button>
                             </div>
-
                         </div>
                         <div class="info" style="margin-top: -20px;">
                             <span style="font-size: small; margin-left: 5px; margin-top: 20px; margin-bottom: 20px;">
@@ -50,17 +49,66 @@
                             </span>
                         </div>
                     </div>
-                    </div>
-            </div>
             </form>
+            <div class="d-flex justify-content-center">
+                <div class="col-md-3 d-flex justify-content-center align-items-center">
+                    {% if messages %}
+                            <div class="alert alert-success" role="alert" style="margin-top: 20px;">
+                                {% for message in messages %}
+                                {{ message }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                </div>
+            </div>
+            <label for="password" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>New password</b></label>
+            <input type="password" id="password" name="password" class="form-control mb-3" placeholder="Password">
+
+            <label for="password-confirm" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Confirm new password</b></label>
+            <input type="password" id="password-confirm" name="password_confirm" class="form-control mb-3" placeholder="Confirm Password">
+            <div class="col-md-3 justify-content-center" style="margin-bottom: 20px; margin-top: 30px;">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary" type="submit">Update password</button>
+                        </div>
+                    </div>
+
+            <form action="{% url 'update-profile' %}" method="post">
+                {% csrf_token %}
+                <fieldset class="form-group mb-3">
+                    <legend class="sr-only" style="font-size: medium;"><b>Gender</b></legend>
+                        <div class="form-check form-check-inline">
+                            {% if user.gender == 'M' %}
+                            <input class="form-check-input" type="radio" name="gender" id="Male" value="M" checked>
+                            {% else %}
+                            <input class="form-check-input" type="radio" name="gender" id="Male" value="M">
+                            {% endif%}
+                            <label class="form-check-label" for="male" style="font-size: small;">Male</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            {% if user.gender == 'F' %}
+                            <input class="form-check-input" type="radio" name="gender" id="Female" value="F" checked>
+                            {% else %}
+                            <input class="form-check-input" type="radio" name="gender" id="Female" value="F">
+                            {% endif%}
+                            <label class="form-check-label" for="female" style="font-size: small">Female</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            {% if user.gender == 'O' %}
+                            <input class="form-check-input" type="radio" name="gender" id="Other" value="O" checked>
+                            {% else %}
+                            <input class="form-check-input" type="radio" name="gender" id="Other" value="O">
+                            {% endif%}
+                            <label class="form-check-label" for="other" style="font-size: small;">Other</label>
+                        </div>
+                    </fieldset>
                     <label for="first-name" class="sr-only" style="font-size: medium; margin-bottom: 10px;"><b>First Name</b></label>
-                    <input type="text" id="first-name" name="first_name" class="form-control mb-3" placeholder="{{ user.first_name }}" autofocus>
+                    <input type="text" id="first-name" name="first_name" value="{{ user.first_name }}" class="form-control mb-3" placeholder="{{ user.first_name }}" autofocus>
 
                     <label for="last-name" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Last Name</b></label>
-                    <input type="text" id="last-name" name="last_name" class="form-control mb-3" placeholder="{{ user.last_name }}">
+                    <input type="text" id="last-name" name="last_name" value="{{ user.last_name }}" class="form-control mb-3" placeholder="{{ user.last_name }}">
 
                     <label for="login" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Login</b></label>
-                    <input type="text" id="login" name="username" class="form-control mb-3" placeholder="{{ user.username }}" disabled autofocus>
+                    <input type="text" id="login" name="username" value="{{ user.username }}" class="form-control mb-3" placeholder="{{ user.username }}" disabled autofocus>
 
                     <div class="info" style="margin-top: -35px; margin-bottom: 10px;">
                         <span style="font-size: small; margin-left: 5px; margin-top: 0px; margin-bottom: 20px;">
@@ -68,15 +116,9 @@
                             If you wish to change your username, please contact the system administrator directly for assistance.
                         </span>
                     </div>
-
-                    <label for="password" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>New password</b></label>
-                    <input type="password" id="password" name="password" class="form-control mb-3" placeholder="Password">
-
-                    <label for="password-confirm" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Confirm new password</b></label>
-                    <input type="password" id="password-confirm" name="password_confirm" class="form-control mb-3" placeholder="Confirm Password">
 
                     <label for="email" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Email</b></label>
-                    <input type="email" id="email" name="email" class="form-control mb-3" placeholder="{{ user.email }}" disabled>
+                    <input type="email" id="email" name="email" value="{{ user.email }}" class="form-control mb-3" placeholder="{{ user.email }}" disabled>
 
                     <div class="info" style="margin-top: -35px; margin-bottom: 10px;">
                         <span style="font-size: small; margin-left: 5px; margin-top: 0px; margin-bottom: 20px;">
@@ -84,21 +126,29 @@
                             If you wish to change your username, please contact the system administrator directly for assistance.
                         </span>
                     </div>
-
-                    <div class="col-md-4">
-                    <label for="dob" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Date of Birth</b></label>
-                    <input type="date" id="dob" name="dob" class="form-control mb-3" placeholder="{{ user.date_of_birth }}">
-                    <div class="dob" style="margin-top: -10px; font-size: small">
-                        <span>
-                            (<b>Now:</b> {{ user.date_of_birth }})
-                        </span>
+                    <div class="col=md4">
+                        <label for="first-name" class="sr-only" style="font-size: medium; margin-bottom: 10px;"><b>Phone number</b></label>
+                        <input type="text" id="phone_number" name="phone_number" value="{{ user.phone_number }}" class="form-control mb-3" placeholder="(+47) {{ user.phone_number }}">
                     </div>
+                <div class="info" style="margin-top: -35px; margin-bottom: 10px;">
+                        <span style="font-size: small; margin-left: 5px; margin-top: 0px; margin-bottom: 20px;">
+                            <br>Phone number must have minimum 9 digits. </span>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="dob" class="sr-only" style="color: black; font-size: medium; margin-bottom: 10px;"><b>Date of Birth</b></label>
+                        <input type="date" id="dob" name="date_of_birth" value="{{ user.date_of_birth|date:'Y-m-d' }}" class="form-control mb-3" placeholder="{{ user.date_of_birth }}">
+                        <div class="dob" style="margin-top: -10px; font-size: small">
+                            <span>
+                                (<b>Now:</b> {{ user.date_of_birth }})
+                            </span>
+                        </div>
                     </div>
                     <div class="col-md-12 justify-content-center" style="margin-bottom: 20px; margin-top: 30px;">
                         <div class="d-grid gap-2">
                             <button class="btn btn-primary" type="submit">Update</button>
                         </div>
                     </div>
+                </form>
             </div>
         </div>
     </div>
