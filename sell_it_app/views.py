@@ -578,6 +578,11 @@ class AboutUsView(View):
         return render(request, 'sell_it_app/about_us.html')
 
 
+class FaqView(View):
+    def get(self, request):
+        return render(request, 'sell_it_app/faq.html')
+
+
 class ContactUsView(View):
     def get(self, request):
         return render(request, 'sell_it_app/contact_us.html')
