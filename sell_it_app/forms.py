@@ -14,6 +14,8 @@ class PictureForm(forms.ModelForm):
         model = Picture
         fields = ['image']
 
+        widgets = {'image': forms.ClearableFileInput(attrs={'allow_multiple_selected': True})}
+
 
 class AddressesForm(forms.ModelForm):
     class Meta:

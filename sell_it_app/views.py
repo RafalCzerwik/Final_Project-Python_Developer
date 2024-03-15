@@ -247,11 +247,11 @@ class ListingView(View):
         if user.is_authenticated:
             listing = get_object_or_404(Listings, pk=listing_id)
             avatar = Avatars.objects.filter(user_id=request.user).last()
-            picture = Picture.objects.get(listing=listing_id)
-            return render(request, 'sell_it_app/listing.html', {'listing': listing, 'avatar': avatar, 'picture': picture})
+            pictures = Picture.objects.filter(listing=listing_id)
+            return render(request, 'sell_it_app/listing.html', {'listing': listing, 'avatar': avatar, 'pictures': pictures})
         else:
             listing = get_object_or_404(Listings, pk=listing_id)
-            picture = Picture.objects.get(listing=listing_id)
+            picture = Picture.objects.filter(listing=listing_id)
             return render(request, 'sell_it_app/listing.html', {'listing': listing, 'picture': picture})
 
 
@@ -280,6 +280,8 @@ class AddListingView(LoginRequiredMixin, View):
         else:
             print("Address form errors:", address_form.errors)
 
+        listing = None
+
         if listing_form.is_valid():
             listing = listing_form.save(commit=False)
             listing.user_id = request.user
@@ -290,10 +292,12 @@ class AddListingView(LoginRequiredMixin, View):
             print("Listing form errors:", listing_form.errors)
 
         if picture_form.is_valid():
-            pictures = picture_form.save(commit=False)
-            pictures.user_id = request.user
-            pictures.listing = listing
-            pictures.save()
+            pictures = []
+            pictures_instance = picture_form.save(commit=False)
+            for file in request.FILES.getlist('image'):
+                picture = Picture(user_id=request.user, image=file, listing=listing)
+                picture.save()
+                pictures.append(picture)
             ctx['pictures'] = pictures
         else:
             print("Picture form errors:", picture_form.errors)
@@ -311,13 +315,13 @@ class EditListingView(LoginRequiredMixin, View):
         listing = get_object_or_404(Listings, pk=listing_id)
         categories = Category.objects.all()
         address = Address.objects.get(id=listing.address_id.id)
-        picture = Picture.objects.get(listing_id=listing.id)
+        pictures = Picture.objects.filter(listing=listing_id)
 
         return render(request, 'sell_it_app/edit_listing.html', {
             'listing': listing,
             'categories': categories,
             'address': address,
-            'picture': picture,
+            'pictures': pictures,
         })
 
     def post(self, request, listing_id):
@@ -355,9 +359,14 @@ class EditListingPictureView(LoginRequiredMixin, View):
         picture_form = PictureForm(request.POST, request.FILES)
 
         if picture_form.is_valid():
-            existing_picture = Picture.objects.get(listing_id=listing.id, user_id=request.user)
-            existing_picture.delete()
+            pictures = []
+            existing_pictures = Picture.objects.filter(listing_id=listing.id, user_id=request.user)
+            existing_pictures.delete()
             picture = picture_form.save(commit=False)
+            for file in request.FILES.getlist('image'):
+                picture = Picture(user_id=request.user, image=file, listing=listing)
+                picture.save()
+                pictures.append(picture)
             picture.listing_id = listing.id
             picture.user_id = request.user
             picture.save()

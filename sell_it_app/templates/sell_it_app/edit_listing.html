@@ -8,15 +8,19 @@
 </div>
 <div class="container" style="margin-top: 20px; border-radius: 10px; border: 1px solid #e0dfdf;">
     <div class="row">
-        <div class="col-md-4" style="margin-bottom: 20px;">
+        <div class="col-md-12" style="margin-bottom: 5px;">
             <div class="text" style="margin-top: 20px;">
                 <span style="font-size: medium;"><b>Picture</b></span>
             </div>
             <form action="{% url 'edit-listing-picture' listing.id %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="picture" style="margin-top: 20px; margin-bottom: 20px;">
-                <img src="{{ picture.image.url }}" style="width: 200px; height: 200px; border-radius: 20px;">
+                {% for picture in pictures %}
+                <img src="{{ picture.image.url }}" style="width: 200px; height: 200px; border-radius: 20px; margin-right: 10px;">
+                {% endfor %}
             </div>
+        </div>
+        <div class="col-md-4" style="margin-bottom: 20px;">
             <div class="input-group" style="margin-top: 10px;">
                 <input class="form-control" value="{{ picture.image }}" name="image" type="file" id="formFileMultiple" multiple>
                 <button class="btn btn-outline-primary" type="submit" id="inputGroupFileAddon04">

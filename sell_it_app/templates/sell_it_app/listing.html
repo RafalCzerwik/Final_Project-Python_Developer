@@ -8,15 +8,11 @@
         <div class="col-md-8" style="margin-top: 20px; margin-bottom: 10px;">
             <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner justify-content-center" style="border-radius: 30px;">
-                    <div class="carousel-item active">
+                    {% for picture in pictures %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
                         <img src="{{ picture.image.url }}" class="d-block w-40" alt="...">
                         </div>
-                        <div class="carousel-item">
-                        <img src="{{ picture.image.url }}" class="d-block w-40" alt="...">
-                        </div>
-                        <div class="carousel-item">
-                        <img src="{{ picture.image.url }}" class="d-block w-40" alt="...">
-                        </div>
+                   {% endfor %}
                     </div>
                 </div>
             <!--<div id="carouselExampleIndicators" class="carousel slide">
