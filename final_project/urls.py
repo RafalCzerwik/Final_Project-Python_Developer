@@ -51,7 +51,8 @@ from sell_it_app.views import (IndexView,
                                UpdatePassword,
                                SendNewMessage,
                                CategoryView,
-                               FaqView)
+                               FaqView,
+                               DeleteListingPicture)
 
 
 urlpatterns = [
@@ -73,6 +74,7 @@ urlpatterns = [
     path('add-listing/', AddListingView.as_view(), name='add-listing'),
     path('edit-listing/<int:listing_id>/', EditListingView.as_view(), name='edit-listing'),
     path('edit-listing/<int:listing_id>/picture/', EditListingPictureView.as_view(), name='edit-listing-picture'),
+    path('delete-listing-picture/<int:listing_id>/', DeleteListingPicture.as_view(), name='delete-listing-picture'),
     path('listing/update-status/<int:listing_id>/', UpdateListingStatusView.as_view(), name='update-listing-status'),
     path('delete-listing/<int:listing_id>/', DeleteListingView.as_view(), name='delete-listing'),
     path('messages/', MessagesView.as_view(), name='messages'),

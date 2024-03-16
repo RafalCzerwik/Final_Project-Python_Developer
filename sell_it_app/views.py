@@ -377,6 +377,11 @@ class EditListingPictureView(LoginRequiredMixin, View):
         return render(request, 'sell_it_app/edit_listing.html', {'listing': listing})
 
 
+class DeleteListingPicture(LoginRequiredMixin, View):
+    def post(self, request, listing_id):
+        pass
+
+
 class UpdateListingStatusView(LoginRequiredMixin, View):
     def post(self, request, listing_id):
         listing = get_object_or_404(Listings, pk=listing_id)
