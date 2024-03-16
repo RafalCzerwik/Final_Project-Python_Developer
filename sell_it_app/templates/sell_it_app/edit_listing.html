@@ -3,58 +3,62 @@
 {% block title %}Edit listing{% endblock %}
 
 {% block content %}
-<div class="container" style="margin-top: 30px;">
-    <h5 style="font-size: x-large; font: bold; margin-bottom: 20px;">Edit listing picture</h5>
-</div>
 <div class="container" style="margin-top: 20px; border-radius: 10px; border: 1px solid #e0dfdf;">
     <div class="row">
         <div class="col-md-12" style="margin-bottom: 5px;">
             <div class="text" style="margin-top: 20px;">
                 <span style="font-size: medium;"><b>Picture</b></span>
             </div>
-            <form action="{% url 'edit-listing-picture' listing.id %}" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
             <div class="picture" style="margin-top: 20px; margin-bottom: 20px;">
-                {% for picture in pictures %}
-                <img src="{{ picture.image.url }}" style="width: 200px; height: 200px; border-radius: 20px; margin-right: 10px;">
-                <div>
-                    <button type="button" class="btn btn-outline-danger">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
-                        </svg>
-                    </button>
+                <div class="row">
+                    {% for picture in pictures %}
+                    <div class="col-md-3">
+                        <img src="{{ picture.image.url }}" style="width: 200px; height: 200px; border-radius: 20px; margin-right: 10px;">
+                        <form action="{% url 'delete-listing-picture' listing.id picture.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
         </div>
-        <div class="col-md-4" style="margin-bottom: 20px;">
+    </div>
+    <div class="row">
+    <div class="col-md-4" style="margin-bottom: 20px; border-bottom: 1px; solid #dedede">
+        <form action="{% url 'edit-listing-picture' listing.id %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
             <div class="input-group" style="margin-top: 10px;">
                 <input class="form-control" value="{{ picture.image }}" name="image" type="file" id="formFileMultiple" multiple>
-                <button class="btn btn-outline-primary" type="submit" id="inputGroupFileAddon04">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-upload" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383"/>
-                    <path fill-rule="evenodd" d="M7.646 4.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V14.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708z"/>
-                  </svg>
-                  Upload</button>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-primary" type="submit" id="inputGroupFileAddon04">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-upload" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383"/>
+                            <path fill-rule="evenodd" d="M7.646 4.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V14.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708z"/>
+                        </svg>
+                        Upload
+                    </button>
+                </div>
             </div>
-
             <div class="info" style="margin-top: -20px;">
                 <span style="font-size: small; margin-left: 5px; margin-top: 10px; margin-bottom: 20px;">
                     <br>Max filesize is 2MB.
                 </span>
             </div>
             {% if messages %}
-            <div class="alert alert-success" role="alert" style="margin-top: 20px;">
                 {% for message in messages %}
-                {{ message }}
+                    <div class="alert alert-{{ message.tags }}" role="alert" style="margin-top: 20px;">
+                        {{ message }}
+                    </div>
                 {% endfor %}
-            </div>
             {% endif %}
-            </form>
-            </div>
-        </div>
-        </div>
+        </form>
     </div>
+</div>
 </div>
 <div class="container" style="margin-top: 30px;">
     <h5 style="font-size: x-large; font: bold; margin-bottom: 20px;">Edit listing</h5>

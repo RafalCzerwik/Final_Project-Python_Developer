@@ -378,8 +378,16 @@ class EditListingPictureView(LoginRequiredMixin, View):
 
 
 class DeleteListingPicture(LoginRequiredMixin, View):
-    def post(self, request, listing_id):
-        pass
+    def post(self, request, listing_id, picture_id):
+        listing = get_object_or_404(Listings, pk=listing_id)
+        picture = Picture.objects.get(pk=picture_id)
+
+        if picture.listing_id == listing.id:
+            picture.delete()
+            messages.success(request, 'Picture deleted successfully!')
+        else:
+            messages.error(request, 'Invalid picture.')
+        return redirect('edit-listing', listing_id=listing_id)
 
 
 class UpdateListingStatusView(LoginRequiredMixin, View):
