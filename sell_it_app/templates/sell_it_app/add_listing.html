@@ -107,8 +107,13 @@
             </div>
             <div class="info" style="margin-top: -10px;">
                 <span style="font-size: small; margin-left: 5px; margin-top: 20px; margin-bottom: 20px;">
-                    <br>Max filesize is 2MB.
+                    <br>Max <b>8</b> pictures. Max filesize is 2MB.
                 </span>
+                {% for message in messages %}
+                <div class="alert alert-warning" role="alert">
+                        {{ message }}
+                </div>
+                {% endfor %}
             </div>
             </div>
         </div>

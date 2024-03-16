@@ -293,14 +293,15 @@ class AddListingView(LoginRequiredMixin, View):
 
         if picture_form.is_valid():
             pictures = []
-            pictures_instance = picture_form.save(commit=False)
-            for file in request.FILES.getlist('image'):
-                picture = Picture(user_id=request.user, image=file, listing=listing)
-                picture.save()
-                pictures.append(picture)
-            ctx['pictures'] = pictures
-        else:
-            print("Picture form errors:", picture_form.errors)
+            if len(request.FILES.getlist('image')) > 8:
+                messages.error(request, 'You have exceeded a maximum of 8 pictures!')
+                return render(request, 'sell_it_app/add_listing.html', ctx)
+            else:
+                for file in request.FILES.getlist('image'):
+                    picture = Picture(user_id=request.user, image=file, listing=listing)
+                    picture.save()
+                    pictures.append(picture)
+                ctx['pictures'] = pictures
 
         if listing_form.is_valid() and picture_form.is_valid() and address_form.is_valid():
             # return render(request, 'sell_it_app/listing.html', ctx)
@@ -359,19 +360,16 @@ class EditListingPictureView(LoginRequiredMixin, View):
         picture_form = PictureForm(request.POST, request.FILES)
 
         if picture_form.is_valid():
-            pictures = []
-            existing_pictures = Picture.objects.filter(listing_id=listing.id, user_id=request.user)
-            existing_pictures.delete()
-            picture = picture_form.save(commit=False)
-            for file in request.FILES.getlist('image'):
-                picture = Picture(user_id=request.user, image=file, listing=listing)
-                picture.save()
-                pictures.append(picture)
-            picture.listing_id = listing.id
-            picture.user_id = request.user
-            picture.save()
-
-            messages.success(request, 'Picture uploaded successfully!')
+            existing_pictures = Picture.objects.filter(listing_id=listing.id, user_id=request.user).count()
+            new_picture_count = len(request.FILES.getlist('image'))
+            total_pictures = existing_pictures + new_picture_count
+            if total_pictures > 8:
+                messages.error(request, 'You can upload a maximum 8 pictures!')
+            else:
+                for file in request.FILES.getlist('image'):
+                    picture = Picture(user_id=request.user, image=file, listing=listing)
+                    picture.save()
+                messages.success(request, 'Picture uploaded successfully!')
             return redirect('edit-listing', listing.id)
 
         return render(request, 'sell_it_app/edit_listing.html', {'listing': listing})
