@@ -253,6 +253,12 @@ class ListingView(View):
             return render(request, 'sell_it_app/listing.html', {'listing': listing, 'picture': picture})
 
 
+class ListingGoogleMapsView(View):
+    def get(self, request, listing_id):
+        listing = get_object_or_404(Listings, pk=listing_id)
+        return render(request, 'sell_it_app/google_maps.html', {'listing': listing})
+
+
 class AddListingView(LoginRequiredMixin, View):
     def get(self, request):
         categories = Category.objects.all()

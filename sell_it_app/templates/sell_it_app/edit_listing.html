@@ -141,9 +141,12 @@
             <div class="input-group" style="margin-bottom: 20px;">
                 <span class="input-group-text">Category</span>
                 <select class="form-select" aria-label="Default select example" name="category_id">
-                  <option selected>{{ listing.category_id.name }}</option>
                     {% for category in categories %}
-                  <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% if category.id == listing.category_id.id %}
+                            <option value="{{ category.id }}" selected>{{ category.name }}</option>
+                        {% else %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
             </div>

@@ -52,7 +52,8 @@ from sell_it_app.views import (IndexView,
                                SendNewMessage,
                                CategoryView,
                                FaqView,
-                               DeleteListingPicture)
+                               DeleteListingPicture,
+                               ListingGoogleMapsView)
 
 
 urlpatterns = [
@@ -70,6 +71,7 @@ urlpatterns = [
     path('public-profile/', PublicProfileView.as_view(), name='public-profile'),
     path('search/', SearchView.as_view(), name='search'),
     path('listings/', MyListingsView.as_view(), name='listings'),
+    path('listing/map/<int:listing_id>/', ListingGoogleMapsView.as_view(), name='google-maps'),
     path('listing-details/<int:listing_id>/', ListingView.as_view(), name='listing-details'),
     path('add-listing/', AddListingView.as_view(), name='add-listing'),
     path('edit-listing/<int:listing_id>/', EditListingView.as_view(), name='edit-listing'),
