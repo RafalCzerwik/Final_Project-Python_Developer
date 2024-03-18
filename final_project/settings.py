@@ -74,8 +74,12 @@ WSGI_APPLICATION = 'final_project.wsgi.application'
 
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'sell_it_db',
+#         'HOST': 'localhost',
+#         'PASSWORD': '**********',
+#         'USER': 'postgres',
+#         'PORT': 5432
 #     }
 # }
 
@@ -125,10 +129,8 @@ LOGIN_URL = '/login/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 try:
-    from final_project.local_settings import DATABASES
-except ModuleNotFoundError:
-    print("Brak konfiguracji bazy danych w pliku local_settings.py!")
-    print("Uzupełnij dane i spróbuj ponownie!")
-    exit(0)
+    from .local_settings import *
+except ImportError:
+    pass
 
 SESSION_COOKIE_AGE = 7200
