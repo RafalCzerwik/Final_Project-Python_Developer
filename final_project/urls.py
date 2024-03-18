@@ -57,13 +57,13 @@ from sell_it_app.views import (IndexView,
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', IndexView.as_view(), name='index'),
-    path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogOutView.as_view(), name='logout'),
+    path('admin/', admin.site.urls),  # OK
+    path('', IndexView.as_view(), name='index'),  # OK
+    path('login/', LoginView.as_view(), name='login'),  # OK
+    path('logout/', LogOutView.as_view(), name='logout'),  # OK
     path('register/', RegisterView.as_view(), name='register'),
-    path('dashboard/', DashboardView.as_view(), name='dashboard'),
-    path('category/<int:category_id>/', CategoryView.as_view(), name='category'),
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),  # OK
+    path('category/<int:category_id>/', CategoryView.as_view(), name='category'),  # OK
     path('profile/', ProfileView.as_view(), name='profile'),
     path('profile/update-password/', UpdatePassword.as_view(), name='update-password'),
     path('update-profile/', UpdateProfileView.as_view(), name='update-profile'),
@@ -86,13 +86,13 @@ urlpatterns = [
     path('send-new-message/<int:listing_id>/', SendNewMessage.as_view(), name='send-new-message'),
     path('show-message/<int:message_id>/', ShowMessageView.as_view(), name='show-message'),
     path('contact/', ContactUsView.as_view(), name='contact'),
-    path('about-us/', AboutUsView.as_view(), name='about-us'),
-    path('faq/', FaqView.as_view(), name='faq'),
-    path('address/', MyAddressView.as_view(), name='address'),
-    path('payments/', PaymentsView.as_view(), name='payments'),
-    path('favourites/', FavouritesView.as_view(), name='favourites'),
-    path('saved-searches/', SavedSearchesView.as_view(), name='saved-searches'),
-    path('newsletter/', NewsletterView.as_view(), name='newsletter'),
+    path('about-us/', AboutUsView.as_view(), name='about-us'),  # OK
+    path('faq/', FaqView.as_view(), name='faq'),  # NOT NOW
+    path('address/', MyAddressView.as_view(), name='address'),  # NOT NOW
+    path('payments/', PaymentsView.as_view(), name='payments'),  # NOT NOW
+    path('favourites/', FavouritesView.as_view(), name='favourites'),  # NOT NOW
+    path('saved-searches/', SavedSearchesView.as_view(), name='saved-searches'),  # NOT NOW
+    path('newsletter/', NewsletterView.as_view(), name='newsletter'),  # OK
 ]
 
 if settings.DEBUG:

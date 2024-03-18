@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 
-from sell_it_app.models import User
+from sell_it_app.models import User, Category, Newsletter
 
 
 # main page test
@@ -116,8 +116,41 @@ def test_dashboard_status_wrong_code(client):
 
 
 @pytest.mark.django_db
+def test_category_status_code_ok(client):
+    category = Category.objects.create(name='test', description='test')
+    response = client.get("/category/1/")
+    assert response.status_code == 200
+    assert Category.objects.filter(name=category.name).count() == 1
+
+
+@pytest.mark.django_db
+def test_category_status_code_not_exists(client):
+    response = client.get('/category/1/')
+    assert response.status_code == 404
+    assert Category.objects.filter(pk=1).exists() is False
+
+
+
+@pytest.mark.django_db
+
+
+
+
+@pytest.mark.django_db
 def test_newsletter_ok(client):
     response = client.get(reverse('newsletter'))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+
+
+@pytest.mark.django_db
+
+
+@pytest.mark.django_db
+def test_abous_us_status_code(client):
+    response = client.get(reverse('about-us'))
     assert response.status_code == 200
 
 
@@ -125,9 +158,15 @@ def test_newsletter_ok(client):
 def test_newsletter_register_email_ok(client):
     response = client.post('/newsletter/', {'email': 'test@gmail.com'})
     assert response.status_code == 302
+    assert Newsletter.objects.count() == 1
 
 
 @pytest.mark.django_db
 def test_newsletter_register_email_exists(client):
+    email = Newsletter.objects.create(email='rafal.czerwik@gmail')
+    email.save()
     response = client.post('/newsletter/', {'email': 'rafal.czerwik@gmail.com'})
-    assert response.status_code == 302
+    if email.email == 'rafal.czerwik@gmail.com':
+        assert Newsletter.objects.filter(email='rafal.czerwik@gmail.com').count() == 1
+        assert response.status_code == 302
+        assert 'Email already registered!' in response.content.decode()
