@@ -16,7 +16,6 @@ User = get_user_model()
 
 class IndexView(View):
     def get(self, request):
-        #promoted_listings = list(Listings.objects.filter(promotion='Promoted').order_by('-add_date'))
         promoted_listings = list(Listings.objects.filter(promotion='Promoted').order_by('-add_date'))
         random.shuffle(promoted_listings)
         carousel = promoted_listings[:3]
@@ -246,11 +245,15 @@ class ListingView(View):
             listing = get_object_or_404(Listings, pk=listing_id)
             avatar = Avatars.objects.filter(user_id=request.user).last()
             pictures = Picture.objects.filter(listing=listing_id)
-            return render(request, 'sell_it_app/listing.html', {'listing': listing, 'avatar': avatar, 'pictures': pictures})
+            return render(request, 'sell_it_app/listing.html', {
+                'listing': listing,
+                'avatar': avatar,
+                'pictures': pictures,
+            })
         else:
             listing = get_object_or_404(Listings, pk=listing_id)
-            picture = Picture.objects.filter(listing=listing_id)
-            return render(request, 'sell_it_app/listing.html', {'listing': listing, 'picture': picture})
+            pictures = Picture.objects.filter(listing=listing_id)
+            return render(request, 'sell_it_app/listing.html', {'listing': listing, 'pictures': pictures})
 
 
 class ListingGoogleMapsView(View):
@@ -672,4 +675,3 @@ class NewsletterView(View):
             subscribe = Newsletter.objects.create(email=email)
 
         return redirect('newsletter')
-
