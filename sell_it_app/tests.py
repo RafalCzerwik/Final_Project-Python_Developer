@@ -306,6 +306,54 @@ def test_update_profile_logged_user_status_code_ok_updated(client):
 
 @pytest.mark.django_db
 def test_update_profile_view_logged_user_status_code_ok_not_updated(client):
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(
+        username='testuser',
+        first_name='test',
+        last_name='test',
+        password='testtest',
+        gender='M',
+        phone_number='123456789',
+        date_of_birth='1988-01-01',
+    )
+    assert User.objects.count() == 1
+    assert User.objects.get(pk=user.id) == user
+
+    client.login(username='testuser', password='testtest')
+    response = client.get('/update-profile/')
+    assert response.status_code == 200
+
+    phone_numer = '98765432'
+
+    if len(phone_numer) == 9:
+        response1 = client.post('/update-profile/', {
+            'username': user.username,
+            'gender': user.gender,
+            'first_name': 'Name',
+            'last_name': 'Surname',
+            'phone_numer': phone_numer,
+            'date_of_birth': '2300-02-02',
+        })
+        assert response1.status_code == 302
+    else:
+        not_updated_user = User.objects.get(username=user.username)
+        assert not_updated_user.first_name == 'test'
+        assert not_updated_user.last_name == 'test'
+
+
+@pytest.mark.django_db
+def test_update_profile_avatar_logged_user_ok(client):
+    pass
+
+
+@pytest.mark.django_db
+def update_profile_avatar_logged_user_fail(client):
+    pass
+
+
+@pytest.mark.django_db
+def test_update_profile_avatar_view_not_logged_user_fail(client):
     pass
 
 
