@@ -211,6 +211,57 @@ def test_profile_view_status_code_not_ok(client):
 
 
 @pytest.mark.django_db
+def test_update_password_view_status_code_ok(client):
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtest')
+
+    assert User.objects.count() == 1
+
+    client.login(username='testuser', password='testtest')
+
+    password = 'newpassword'
+    confirm_password = 'newpassword'
+
+    if password == confirm_password:
+        response = client.post('/profile/update-password/', {
+            'new_password': password,
+            'new_password_confirm': confirm_password,
+        })
+
+        assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_update_password_view_status_code_not_ok(client):
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtest')
+
+    assert User.objects.count() == 1
+
+    client.login(username='testuser', password='testtest')
+
+    password = 'new'
+    confirm_password = 'new1'
+
+    if len(password) >= 6 and password == confirm_password:
+        response = client.post('/profile/update-password/', {
+            'new_password': password,
+            'new_password_confirm': confirm_password,
+        })
+
+        assert response.status_code == 200
+        assert 'Password must be at least 6 characters long!' in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_update_password_view_not_logged_status_code_ok(client):
+    response = client.post('/profile/update-password/')
+    assert response.status_code != 200
+
+
+@pytest.mark.django_db
 def test_newsletter_ok(client):
     response = client.get(reverse('newsletter'))
     assert response.status_code == 200
@@ -457,6 +508,7 @@ def test_contact_view_not_logged_user_status_code_not_ok(client):
     assert response.status_code == 200
     assert Messages.objects.filter(from_unregistered_user=unregistered_email).count() == 0
     assert 'Invalid email address.' in response.content.decode()
+
 
 @pytest.mark.django_db
 def test_about_us_status_code(client):

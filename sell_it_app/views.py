@@ -157,6 +157,10 @@ class UpdatePassword(LoginRequiredMixin, View):
         if form.is_valid():
             user = request.user
             new_password = form.cleaned_data.get('new_password')
+            if len(new_password) < 6:
+                messages.error(request, 'Password must be at least 6 characters long!')
+                return render(request, 'sell_it_app/profile.html', {'form': form, 'user': user, 'avatar': avatar})
+
             user.set_password(new_password)
             user.save()
 
