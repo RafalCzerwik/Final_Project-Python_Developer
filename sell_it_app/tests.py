@@ -1,3 +1,6 @@
+import datetime
+from datetime import timedelta
+
 import pytest
 from django.urls import reverse
 
@@ -42,6 +45,67 @@ def test_login_user_invalid(client):
 def test_logout_user_ok(client):
     response = client.post('/logout/', {'username': 'test', 'password': 'passpass'})
     assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_register_user_ok(client):
+    assert User.objects.count() == 0
+
+    gender = "M"
+    username = 'testuser'
+    first_name = 'testfirst'
+    last_name = 'testlast'
+    email = 'test@gmail.com'
+    password = 'testtesttest'
+    password2 = 'testtesttest'
+    dob = datetime.date.today() - timedelta(days=10000)
+
+    assert User.objects.filter(username=username).exists() is False
+
+    if password != password2:
+        raise ValueError('Passwords do not match')
+    else:
+        response = client.post(f'/register/', {
+            'gender': gender,
+            'username': username,
+            'first_name': first_name,
+            'last_name': last_name,
+            'email': email,
+            'password': password,
+            'password_confirm': password2,
+            'dob': dob,
+        })
+
+    assert response.status_code == 302  # -> to /login/
+    assert User.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_register_user_invalid(client):
+    assert User.objects.count() == 0
+
+    gender = "W"
+    username = 'testuser'
+    first_name = 'testfirst'
+    last_name = 'testlast'
+    email = 'test@gmail.com'
+    password = 'testtesttest'
+    password2 = 'testtesttest1'
+    dob = datetime.date.today() - timedelta(days=10000)
+
+    response = client.post(f'/register/', {
+        'gender': gender,
+        'username': username,
+        'first_name': first_name,
+        'last_name': last_name,
+        'email': email,
+        'password': password,
+        'password_confirm': password2,
+        'dob': dob,
+    })
+
+    assert response.status_code != 302
+    assert User.objects.count() == 0
 
 
 # register page
