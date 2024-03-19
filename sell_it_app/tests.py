@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 
-from sell_it_app.models import User, Category, Newsletter, Listings
+from sell_it_app.models import User, Category, Newsletter, Listings, Address, Picture, Messages
 
 
 # main page test
@@ -190,7 +190,7 @@ def test_search_view_not_logged_user_status_code_ok(client):
 @pytest.mark.django_db
 def test_listings_view_logged_user_status_code_ok(client):
     user = User.objects.create_user(username='testuser', password='testtesttesttest')
-    user.save()
+
     client.login(username='testuser', password='testtesttesttest')
     response = client.get('/listings/')
     assert response.status_code == 200
@@ -204,7 +204,132 @@ def test_listings_view_not_logged_user_status_code_ok(client):
 
 
 @pytest.mark.django_db
+def test_listing_map_view_logged_user_status_code_ok(client):
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
 
+    category = Category.objects.create(name='testcategory')
+    category.save()
+
+    address = Address.objects.create(street_name='testaddress', user_id=user)
+    address.save()
+
+    client.login(username='testuser', password='testtesttesttest')
+
+    listing = Listings.objects.create(user_id=user, category_id=category, address_id=address, condition='Used',
+                                      offer_type='Sell', promotion='Not Promoted', status='Active',
+                                      title='Test Listing', description='This is a test listing', price=10.99)
+    listing.save()
+
+    response = client.get(f'/listing/map/{listing.id}/')
+    assert response.status_code == 200
+    assert Listings.objects.filter(id=listing.id).count() == 1
+    assert Address.objects.filter(id=address.id).count() == 1
+    assert Category.objects.filter(id=category.id).count() == 1
+
+
+@pytest.mark.django_db
+def test_listing_details_view_logged_user_status_code_ok(client):
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+
+    address = Address.objects.create(street_name='testaddress', user_id=user)
+    address.save()
+
+    assert Listings.objects.filter(user_id=user).count() == 0
+
+    client.login(username='testuser', password='testtesttesttest')
+
+    listing = Listings.objects.create(user_id=user, category_id=category, address_id=address, condition='Used',
+                                      offer_type='Sell', promotion='Not Promoted', status='Active',
+                                      title='Test Listing', description='This is a test listing', price=10.99)
+    listing.save()
+
+    response = client.get(f'/listing-details/{listing.id}/')
+    assert response.status_code == 200
+    assert Listings.objects.filter(id=listing.id).count() == 1
+    assert Address.objects.filter(id=address.id).count() == 1
+    assert Category.objects.filter(id=category.id).count() == 1
+    assert Picture.objects.filter(id=listing.id).count() == 0
+
+
+@pytest.mark.django_db
+def test_listing_details_view_not_logged_user_status_code_ok(client):
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+
+    address = Address.objects.create(street_name='testaddress', user_id=user)
+    address.save()
+
+    assert Listings.objects.filter(user_id=user).count() == 0
+
+    listing = Listings.objects.create(user_id=user, category_id=category, address_id=address, condition='Used',
+                                      offer_type='Sell', promotion='Not Promoted', status='Active',
+                                      title='Test Listing', description='This is a test listing', price=10.99)
+    listing.save()
+
+    response = client.get(f'/listing-details/{listing.id}/')
+    assert response.status_code == 200
+    assert Listings.objects.filter(id=listing.id).count() == 1
+    assert Address.objects.filter(id=address.id).count() == 1
+    assert Category.objects.filter(id=category.id).count() == 1
+    assert Picture.objects.filter(id=listing.id).count() == 0
+
+
+@pytest.mark.django_db
+def test_listing_details_view_not_logged_user_status_code_not_ok(client):
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+
+    address = Address.objects.create(street_name='testaddress', user_id=user)
+    address.save()
+
+    assert Listings.objects.filter(user_id=user).count() == 0
+
+    listing = Listings.objects.create(user_id=user, category_id=category, address_id=address, condition='Used',
+                                      offer_type='Sell', promotion='Not Promoted', status='Active',
+                                      title='Test Listing', description='This is a test listing', price=10.99)
+    listing.save()
+
+    response = client.get(f'/listing-details/99/')
+    assert response.status_code == 404
+    assert Listings.objects.filter(id=99).count() == 0
+
+
+@pytest.mark.django_db
+def test_messages_view_not_logged_user_status_code_ok(client):
+    assert Messages.objects.count() == 0
+
+    response = client.get('/messages/')
+    assert response.status_code != 200  # from 302 -> /login/ 200
+    assert Messages.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_messages_view_logged_user_status_code_ok(client):
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtest')
+    user1 = User.objects.create_user(username='testuser1', password='testtest1')
+
+    message = Messages.objects.create(title='Test Message', message='Test Message', from_user_id=user.id,
+                                      to_user_id=user1.id)
+    message.save()
+
+    client.login(username='testuser', password='testtest')
+    response = client.get('/messages/')
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
 
 
 
@@ -218,18 +343,56 @@ def test_listings_view_not_logged_user_status_code_ok(client):
 
 
 
-@pytest.mark.django_db
-
-
-
-
-@pytest.mark.django_db
-
 
 
 
 @pytest.mark.django_db
+def test_contact_view_logged_user_status_code_ok(client):
+    assert User.objects.count() == 0
+    admin = User.objects.create_superuser(username='Admin')
+    user = User.objects.create_user(username='testuser', password='testtest')
 
+    assert User.objects.count() == 2
+    assert Messages.objects.all().count() == 0
+
+    client.login(username='testuser', password='testtest')
+    response = client.post('/contact/', {'title': 'test title', 'message': 'test message', 'to_user_id': admin.id, 'from_user_id': user.id})
+
+    assert response.status_code == 200
+    assert Messages.objects.filter(from_user_id=user.id).count() == 1
+
+
+@pytest.mark.django_db
+def test_contact_view_not_logged_user_status_code_ok(client):
+    assert User.objects.count() == 0
+    admin = User.objects.create_superuser(username='Admin')
+
+    assert User.objects.count() == 1
+    assert Messages.objects.all().count() == 0
+
+    unregistered_email = 'test@gmail.com'
+
+    response = client.post('/contact/', {'title': 'test title', 'message': 'test message', 'to_user_id': admin.id, 'email': unregistered_email})
+
+    assert response.status_code == 200
+    assert Messages.objects.filter(from_unregistered_user=unregistered_email).count() == 1
+
+
+@pytest.mark.django_db
+def test_contact_view_not_logged_user_status_code_not_ok(client):
+    assert User.objects.count() == 0
+    admin = User.objects.create_superuser(username='Admin')
+
+    assert User.objects.count() == 1
+    assert Messages.objects.all().count() == 0
+
+    unregistered_email = ''
+
+    response = client.post('/contact/', {'title': 'test title', 'message': 'test message', 'to_user_id': admin.id, 'email': unregistered_email})
+
+    assert response.status_code == 200
+    assert Messages.objects.filter(from_unregistered_user=unregistered_email).count() == 0
+    assert 'Invalid email address.' in response.content.decode()
 
 @pytest.mark.django_db
 def test_about_us_status_code(client):
