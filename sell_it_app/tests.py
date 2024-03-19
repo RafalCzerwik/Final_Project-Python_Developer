@@ -1,7 +1,7 @@
 import pytest
 from django.urls import reverse
 
-from sell_it_app.models import User, Category, Newsletter
+from sell_it_app.models import User, Category, Newsletter, Listings
 
 
 # main page test
@@ -130,10 +130,20 @@ def test_category_status_code_not_exists(client):
     assert Category.objects.filter(pk=1).exists() is False
 
 
+@pytest.mark.django_db
+def test_profile_view_status_code(client):
+    user = User.objects.create_user(username='testuser', password='testtesttest')
+    user.save()
+    client.login(username='testuser', password='testtesttest')
+    response = client.get('/profile/', {'username': 'test', 'password': 'testtesttest'})
+    assert response.status_code == 200
+    assert User.objects.filter(pk=user.pk).exists() is True
+
 
 @pytest.mark.django_db
-
-
+def test_profile_view_status_code_not_ok(client):
+    response = client.get('/profile/')
+    assert response.status_code != 200
 
 
 @pytest.mark.django_db
@@ -143,13 +153,86 @@ def test_newsletter_ok(client):
 
 
 @pytest.mark.django_db
+def test_public_profile_view_status_code(client):
+    user = User.objects.create_user(username='testuser', password='testtesttest')
+    user.save()
+    client.login(username='testuser', password='testtesttest')
+    response = client.get('/public_profile/')
+    assert response.status_code == 404
+    assert User.objects.filter(pk=user.pk).exists() is True
+
+
+@pytest.mark.django_db
+def test_public_profile_view_status_code_not_ok(client):
+    response = client.get('/public_profile/')
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_search_view_logged_user_status_code_ok(client):
+    user = User.objects.create_user(username='testuser', password='testtesttest')
+    user.save()
+    client.login(username='testuser', password='testtesttest')
+    search_query = 'test'
+    response = client.get(f'/search/?search_query={search_query}')
+    assert response.status_code == 200
+    assert Listings.objects.filter(title__icontains=search_query).order_by('title').count() == 0
+
+
+@pytest.mark.django_db
+def test_search_view_not_logged_user_status_code_ok(client):
+    search_query = 'test'
+    response = client.post(f'/search/?search_query={search_query}')
+    assert response.status_code != 200
+    assert Listings.objects.filter(title__icontains=search_query).order_by('title').count() == 0
+
+
+@pytest.mark.django_db
+def test_listings_view_logged_user_status_code_ok(client):
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+    user.save()
+    client.login(username='testuser', password='testtesttesttest')
+    response = client.get('/listings/')
+    assert response.status_code == 200
+    assert Listings.objects.filter(user_id=user).count() == 0
+
+
+@pytest.mark.django_db
+def test_listings_view_not_logged_user_status_code_ok(client):
+    response = client.get('/listings/')
+    assert response.status_code != 200
+
+
+@pytest.mark.django_db
+
+
+
+
+@pytest.mark.django_db
+
+
+
+
+@pytest.mark.django_db
+
+
+
+
+@pytest.mark.django_db
+
+
+
+
+@pytest.mark.django_db
+
+
 
 
 @pytest.mark.django_db
 
 
 @pytest.mark.django_db
-def test_abous_us_status_code(client):
+def test_about_us_status_code(client):
     response = client.get(reverse('about-us'))
     assert response.status_code == 200
 
