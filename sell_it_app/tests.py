@@ -2,9 +2,11 @@ import datetime
 from datetime import timedelta
 
 import pytest
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test import Client
 from django.urls import reverse
 
-from sell_it_app.models import User, Category, Newsletter, Listings, Address, Picture, Messages
+from sell_it_app.models import User, Category, Newsletter, Listings, Address, Picture, Messages, Avatars
 
 
 # main page test
@@ -344,23 +346,65 @@ def test_update_profile_view_logged_user_status_code_ok_not_updated(client):
 
 @pytest.mark.django_db
 def test_update_profile_avatar_logged_user_ok(client):
-    pass
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='password')
+    assert User.objects.count() == 1
+
+    client.login(username='testuser', password='password')
+
+    assert Avatars.objects.count() == 0
+
+    image = open('sell_it_app/static/test/test_avatar.png', 'rb')
+    uploaded_file = SimpleUploadedFile(name='test_avatar.png', content=image.read(), content_type='image/png')
+
+    response = client.post('/update-profile/avatar/', {'avatar': uploaded_file}, follow=True)
+
+    assert Avatars.objects.count() == 1
+    assert response.status_code == 200
+    assert Avatars.objects.get(user_id=user.id).avatar.url is not None
+
+    update = Avatars.objects.filter(user_id=user.id).exists()
+
+    if update:
+        old_avatar = Avatars.objects.filter(user_id=user.id)
+        old_avatar.delete()
+
+        assert Avatars.objects.count() == 0
+
+    image_new = open('sell_it_app/static/test/test_avatar.png', 'rb')
+    uploaded_file = SimpleUploadedFile(name='test_avatar.png', content=image_new.read(), content_type='image/png')
+
+    response1 = client.post('/update-profile/avatar/', {'avatar': uploaded_file}, follow=True)
+    assert Avatars.objects.count() == 1
+    assert response1.status_code == 200
+    assert Avatars.objects.get(user_id=user.id).avatar.url is not None
 
 
 @pytest.mark.django_db
-def update_profile_avatar_logged_user_fail(client):
-    pass
+def test_update_profile_avatar_logged_user_fail(client):
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='password')
+    assert User.objects.count() == 1
+
+    client.login(username='testuser', password='password')
+
+    assert Avatars.objects.count() == 0
+
+    image = open('sell_it_app/static/test/test_avatar.pdf', 'rb')
+    uploaded_file = SimpleUploadedFile(name='test_avatar.pdf', content=image.read(), content_type='image/png')
+
+    response = client.post('/update-profile/avatar/', {'avatar': uploaded_file}, follow=True)
+    assert Avatars.objects.count() == 0
+    assert response.status_code == 200
+    assert not Avatars.objects.filter(user_id=user.id).exists()
 
 
 @pytest.mark.django_db
 def test_update_profile_avatar_view_not_logged_user_fail(client):
-    pass
-
-
-@pytest.mark.django_db
-def test_newsletter_ok(client):
-    response = client.get(reverse('newsletter'))
-    assert response.status_code == 200
+    response = client.post('/update-profile/avatar/')
+    assert response.status_code != 200
 
 
 @pytest.mark.django_db
@@ -416,6 +460,11 @@ def test_listings_view_not_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_listing_map_view_logged_user_status_code_ok(client):
+    assert User.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Listings.objects.count() == 0
+
     user = User.objects.create_user(username='testuser', password='testtesttesttest')
 
     category = Category.objects.create(name='testcategory')
@@ -510,6 +559,88 @@ def test_listing_details_view_not_logged_user_status_code_not_ok(client):
     response = client.get(f'/listing-details/99/')
     assert response.status_code == 404
     assert Listings.objects.filter(id=99).count() == 0
+
+
+@pytest.mark.django_db
+def test_add_listing_view_logged_user_status_code_ok(client):
+    assert User.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Listings.objects.count() == 0
+    assert Picture.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+
+    address = Address.objects.create(street_name='testaddress', user_id=user)
+    address.save()
+
+    client.login(username='testuser', password='testtesttesttest')
+
+    listing = Listings.objects.create(user_id=user, category_id=category, address_id=address, condition='Used',
+                                      offer_type='Sell', promotion='Not Promoted', status='Active',
+                                      title='Test Listing', description='This is a test listing', price=10.99)
+    listing.save()
+
+    image = open('sell_it_app/static/test/test_avatar.png', 'rb')
+    uploaded_file = SimpleUploadedFile(name='test_avatar.png', content=image.read(), content_type='image/png')
+
+    listing_picture = Picture.objects.create(image=uploaded_file, user_id=user, listing_id=listing.id)
+    listing_picture.save()
+
+    response = client.get(f'/listing/map/{listing.id}/')
+    assert response.status_code == 200
+    assert Listings.objects.filter(id=listing.id).count() == 1
+    assert Address.objects.filter(id=address.id).count() == 1
+    assert Category.objects.filter(id=category.id).count() == 1
+    assert Picture.objects.count() == 1
+
+@pytest.mark.django_db
+def test_add_listing_view_logged_user_status_code_not_ok(client):
+    assert User.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Listings.objects.count() == 0
+    assert Picture.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+
+    address = Address.objects.create(street_name='testaddress', user_id=user)
+    address.save()
+
+    client.login(username='testuser', password='testtesttesttest')
+
+    response = client.get('/add-listing/')
+    assert response.status_code == 200
+
+    try:
+        image = open('', 'rb')
+        uploaded_file = SimpleUploadedFile(name='', content=image.read(), content_type='image/png')
+
+        listing = Listings.objects.create(user_id=user, category_id=category, address_id=address, condition='Used',
+                                          offer_type='Sell', promotion='Not Promoted', status='Active',
+                                          title='Test Listing', description='This is a test listing', price=10.99)
+        listing.save()
+
+        listing_picture = Picture.objects.create(image=uploaded_file, user_id=user, listing_id=listing.id)
+        listing_picture.save()
+    except FileNotFoundError:
+        assert Picture.objects.count() == 0
+        assert Listings.objects.count() == 0
+
+    assert Address.objects.filter(id=address.id).count() == 1
+    assert Category.objects.filter(id=category.id).count() == 1
+
+
+
+@pytest.mark.django_db
+
+
 
 
 @pytest.mark.django_db
@@ -609,6 +740,12 @@ def test_contact_view_not_logged_user_status_code_not_ok(client):
 @pytest.mark.django_db
 def test_about_us_status_code(client):
     response = client.get(reverse('about-us'))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_newsletter_ok(client):
+    response = client.get(reverse('newsletter'))
     assert response.status_code == 200
 
 
