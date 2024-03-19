@@ -597,6 +597,7 @@ def test_add_listing_view_logged_user_status_code_ok(client):
     assert Category.objects.filter(id=category.id).count() == 1
     assert Picture.objects.count() == 1
 
+
 @pytest.mark.django_db
 def test_add_listing_view_logged_user_status_code_not_ok(client):
     assert User.objects.count() == 0
