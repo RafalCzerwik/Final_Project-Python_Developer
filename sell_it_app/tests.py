@@ -259,6 +259,24 @@ def test_update_password_view_status_code_not_ok(client):
 def test_update_password_view_not_logged_status_code_ok(client):
     response = client.post('/profile/update-password/')
     assert response.status_code != 200
+    assert User.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_update_profile_view_not_logged_status_code_ok(client):
+    response = client.post('/update-profile/')
+    assert response.status_code != 200
+    assert User.objects.count() == 0
+
+
+@pytest.mark.django_db
+def test_update_profile_logged_user_status_code_ok_updated(client):
+    pass
+
+
+@pytest.mark.django_db
+def test_update_profile_view_logged_user_status_code_ok_not_updated(client):
+    pass
 
 
 @pytest.mark.django_db
