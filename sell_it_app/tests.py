@@ -3,11 +3,10 @@ from datetime import timedelta
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import Client
+
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDict
 
-from sell_it_app.forms import PictureForm, ListingsForm, AddressesForm
 from sell_it_app.models import User, Category, Newsletter, Listings, Address, Picture, Messages, Avatars
 
 
@@ -662,6 +661,166 @@ def test_add_listing_unregistered_fail(client):
      response = client.get('/add-listing/')
      assert response.status_code != 200
 
+
+@pytest.mark.django_db
+def test_edit_listing_view_status_code_ok(client):
+    assert User.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Listings.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+
+    client.login(username='testuser', password='testtesttesttest')
+
+    address = Address.objects.create(
+        user_id=user,
+        street_name='test',
+        street_name_secondary='test',
+        postal_code='1234',
+        city='test',
+        country='test'
+    )
+
+    listing = Listings.objects.create(
+            user_id=user,
+            category_id=category,
+            address_id=address,
+            condition='New',
+            offer_type='Sell',
+            title='Test title',
+            description='This is a test listing',
+            price=100,
+    )
+
+    response = client.post(f'/edit-listing/{listing.id}/', {
+        'title': 'new title',
+        'description': 'new description',
+        'condition': listing.condition,
+        'offer_type': listing.offer_type,
+        'price': listing.price,
+        'category_id': listing.category_id.id,
+        'address_id': listing.address_id.id,
+        'user_id': user.id,
+        'street_name': address.street_name,
+        'city': address.city,
+        'postal_code': address.postal_code,
+        'country': address.country,
+    })
+
+    listing.refresh_from_db()
+    assert response.status_code == 302
+    assert Listings.objects.count() == 1
+    assert Address.objects.count() == 1
+    assert listing.title == 'new title'
+    assert listing.description == 'new description'
+
+
+@pytest.mark.django_db
+def test_edit_listing_view_status_code_not_ok(client):
+    assert User.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Listings.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+
+    client.login(username='testuser', password='testtesttesttest')
+
+    address = Address.objects.create(
+        user_id=user,
+        street_name='test',
+        street_name_secondary='test',
+        postal_code='1234',
+        city='test',
+        country='test'
+    )
+
+    listing = Listings.objects.create(
+            user_id=user,
+            category_id=category,
+            address_id=address,
+            condition='New',
+            offer_type='Sell',
+            title='Test title',
+            description='This is a test listing',
+            price=100,
+    )
+
+    response = client.post(f'/edit-listing/{listing.id}/')
+
+    assert response.status_code != 302
+    assert Listings.objects.count() == 1
+    assert Address.objects.count() == 1
+
+
+@pytest.mark.django_db
+
+
+
+@pytest.mark.django_db
+
+
+
+@pytest.mark.django_db
+
+
+
+@pytest.mark.django_db
+def test_update_message_status_code_ok(client):
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtest')
+    user1 = User.objects.create_user(username='testuser1', password='testtest1')
+
+    message = Messages.objects.create(title='Test Message', message='Test Message', from_user_id=user.id,
+                                      to_user_id=user1.id, status='Unread')
+    message.save()
+
+    assert message.status == 'Unread'
+
+    client.login(username='testuser', password='testtest')
+
+    response = client.post(f'/message/update-status/{message.id}/', {'status': 'Read'})
+
+    message.refresh_from_db()
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+    assert response.status_code == 302
+    assert message.status == 'Read'
+
+
+@pytest.mark.django_db
+def test_update_message_status_code_not_ok(client):
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtest')
+    user1 = User.objects.create_user(username='testuser1', password='testtest1')
+    user2 = User.objects.create_user(username='testuser2', password='testtest2')
+
+    message = Messages.objects.create(title='Test Message', message='Test Message', from_user_id=user.id,
+                                      to_user_id=user1.id, status='Unread')
+    message.save()
+
+    assert message.status == 'Unread'
+
+    client.login(username='testuser2', password='testtest2')
+
+    response = client.post(f'/message/update-status/{message.id}/')
+
+    message.refresh_from_db()
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 3
+    assert response.status_code == 403
+    assert message.status == 'Unread'
 
 @pytest.mark.django_db
 def test_messages_view_not_logged_user_status_code_ok(client):

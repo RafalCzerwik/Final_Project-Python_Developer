@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
@@ -465,6 +466,9 @@ class MessagesView(LoginRequiredMixin, View):
 class MessageStatusUpdateView(LoginRequiredMixin, View):
     def post(self, request, message_id):
         message = get_object_or_404(Messages, id=message_id)
+        if request.user.id != message.from_user_id and request.user.id != message.to_user_id:
+            return HttpResponseForbidden("You do not have permission to change this message's status.")
+
         if message.status == 'Unread':
             message.status = 'Read'
             message.save()
