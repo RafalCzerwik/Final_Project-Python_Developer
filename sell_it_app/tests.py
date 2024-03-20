@@ -3,6 +3,7 @@ from datetime import timedelta
 
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db import IntegrityError
 
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDict
@@ -261,14 +262,14 @@ def test_update_password_view_status_code_not_ok(client):
 @pytest.mark.django_db
 def test_update_password_view_not_logged_status_code_ok(client):
     response = client.post('/profile/update-password/')
-    assert response.status_code != 200
+    assert response.status_code == 302
     assert User.objects.count() == 0
 
 
 @pytest.mark.django_db
 def test_update_profile_view_not_logged_status_code_ok(client):
-    response = client.post('/update-profile/')
-    assert response.status_code != 200
+    response = client.get('/update-profile/')
+    assert response.status_code == 302
     assert User.objects.count() == 0
 
 
@@ -761,16 +762,261 @@ def test_edit_listing_view_status_code_not_ok(client):
 
 
 @pytest.mark.django_db
+def test_edit_listing_picture_success(client):
+    assert User.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Listings.objects.count() == 0
+    assert Picture.objects.count() == 0
 
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+    address = Address.objects.create(
+        user_id=user,
+        street_name='Test address',
+        street_name_secondary='Test address',
+        postal_code='12345',
+        country='country',
+        city='city',
+    )
+
+    client.login(username='testuser', password='testtesttesttest')
+
+    image1 = open('sell_it_app/static/test/test_avatar1.png', 'rb')
+    image2 = open('sell_it_app/static/test/test_avatar2.png', 'rb')
+    uploaded_file1 = SimpleUploadedFile(name='test_avatar1.png', content=image1.read(), content_type='image/png')
+    uploaded_file2 = SimpleUploadedFile(name='test_avatar2.png', content=image2.read(), content_type='image/png')
+    multiple_images = [uploaded_file1, uploaded_file2]
+    image1.close()
+    image2.close()
+
+    listing = Listings.objects.create(
+        user_id=user,
+        category_id=category,
+        address_id=address,
+        condition='New',
+        offer_type='Sell',
+        title='Test title',
+        description='This is a test listing',
+        price=100,
+    )
+    for upload in multiple_images:
+        Picture.objects.create(user_id=user, listing_id=listing.id, image=upload)
+
+
+    assert Listings.objects.count() == 1
+    assert Address.objects.count() == 1
+    assert Picture.objects.count() == 2
+
+    image3 = open('sell_it_app/static/test/test_avatar3.png', 'rb')
+    image4 = open('sell_it_app/static/test/test_avatar4.png', 'rb')
+    uploaded_file1 = SimpleUploadedFile(name='test_avatar3.png', content=image3.read(), content_type='image/png')
+    uploaded_file2 = SimpleUploadedFile(name='test_avatar4.png', content=image4.read(), content_type='image/png')
+    new_multiple_images = [uploaded_file1, uploaded_file2]
+    image3.close()
+    image4.close()
+
+    response = client.post(f'/edit-listing/{listing.id}/picture/', {'user_id': user, 'listing_id': listing.id, 'image': new_multiple_images})
+
+    assert response.status_code == 302
+    assert Listings.objects.count() == 1
+    assert Address.objects.count() == 1
+    assert Picture.objects.count() == 4
 
 
 @pytest.mark.django_db
-
+def test_edit_listing_picture_fail(client):
+    response = client.post(f'/edit-listing/99/picture/')
+    assert response.status_code == 302
 
 
 @pytest.mark.django_db
+def test_delete_listing_picture_success(client):
+
+    assert User.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Listings.objects.count() == 0
+    assert Picture.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+    address = Address.objects.create(
+        user_id=user,
+        street_name='Test address',
+        street_name_secondary='Test address',
+        postal_code='12345',
+        country='country',
+        city='city',
+    )
+
+    client.login(username='testuser', password='testtesttesttest')
+
+    image1 = open('sell_it_app/static/test/test_avatar1.png', 'rb')
+    image2 = open('sell_it_app/static/test/test_avatar2.png', 'rb')
+    image3 = open('sell_it_app/static/test/test_avatar3.png', 'rb')
+    uploaded_file1 = SimpleUploadedFile(name='test_avatar1.png', content=image1.read(), content_type='image/png')
+    uploaded_file2 = SimpleUploadedFile(name='test_avatar2.png', content=image2.read(), content_type='image/png')
+    uploaded_file3 = SimpleUploadedFile(name='test_avatar3.png', content=image3.read(), content_type='image/png')
+    multiple_images = [uploaded_file1, uploaded_file2, uploaded_file3]
+    image1.close()
+    image2.close()
+    image3.close()
+
+    listing = Listings.objects.create(
+        user_id=user,
+        category_id=category,
+        address_id=address,
+        condition='New',
+        offer_type='Sell',
+        title='Test title',
+        description='This is a test listing',
+        price=100,
+    )
+    pictures = []
+    for upload in multiple_images:
+        picture = Picture.objects.create(user_id=user, listing_id=listing.id, image=upload)
+        pictures.append(picture)
+
+    assert Listings.objects.count() == 1
+    assert Address.objects.count() == 1
+    assert Picture.objects.count() == 3
+
+    picture_delete = pictures[2]
+
+    response = client.post(f'/delete-listing-picture/{listing.id}/{picture_delete.id}/')
+
+    assert response.status_code == 302
+    assert Listings.objects.count() == 1
+    assert Address.objects.count() == 1
+    assert Picture.objects.count() == 2
 
 
+@pytest.mark.django_db
+def test_delete_listing_picture_fail(client):
+    response = client.post(f'/delete-listing-picture/99/1/')
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_update_listing_status_view_success(client):
+    assert User.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Listings.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+
+    client.login(username='testuser', password='testtesttesttest')
+
+    address = Address.objects.create(
+        user_id=user,
+        street_name='test',
+        street_name_secondary='test',
+        postal_code='1234',
+        city='test',
+        country='test'
+    )
+
+    listing = Listings.objects.create(
+        user_id=user,
+        category_id=category,
+        address_id=address,
+        condition='New',
+        offer_type='Sell',
+        title='Test title',
+        description='This is a test listing',
+        price=100,
+        status='Active',
+    )
+
+    assert listing.status == 'Active'
+    assert User.objects.count() == 1
+    assert Category.objects.count() == 1
+    assert Address.objects.count() == 1
+    assert Listings.objects.count() == 1
+
+    response = client.post(f'/listing/update-status/{listing.id}/', {'status': 'Inactive'})
+
+    listing.refresh_from_db()
+    assert listing.status == 'Inactive'
+    assert response.status_code == 302
+    assert Listings.objects.count() == 1
+    assert Address.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_update_listing_status_view_fail(client):
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+    client.login(username='testuser', password='testtesttesttest')
+
+    response = client.post(f'/listing/update-status/99/', {'status': 'Inactive'})
+
+    assert response.status_code == 404
+    assert User.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_delete_listing_view_status_code_ok(client):
+    assert User.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Listings.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+
+    category = Category.objects.create(name='testcategory')
+    category.save()
+
+    client.login(username='testuser', password='testtesttesttest')
+
+    address = Address.objects.create(
+        user_id=user,
+        street_name='test',
+        street_name_secondary='test',
+        postal_code='1234',
+        city='test',
+        country='test'
+    )
+
+    listing = Listings.objects.create(
+        user_id=user,
+        category_id=category,
+        address_id=address,
+        condition='New',
+        offer_type='Sell',
+        title='Test title',
+        description='This is a test listing',
+        price=100,
+    )
+    assert User.objects.count() == 1
+    assert Category.objects.count() == 1
+    assert Address.objects.count() == 1
+    assert Listings.objects.count() == 1
+
+    response = client.post(f'/delete-listing/{listing.id}/')
+
+    assert response.status_code == 302
+    assert Listings.objects.count() == 0
+    assert Address.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_delete_listing_view_status_code_not_ok(client):
+    user = User.objects.create_user(username='testuser', password='testtesttesttest')
+    client.login(username='testuser', password='testtesttesttest')
+
+    response = client.post('/delete-listing/99/')
+
+    assert response.status_code == 404
+    assert User.objects.count() == 1
 
 @pytest.mark.django_db
 def test_update_message_status_code_ok(client):

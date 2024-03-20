@@ -369,6 +369,10 @@ class EditListingPictureView(LoginRequiredMixin, View):
 
     def post(self, request, listing_id):
         listing = get_object_or_404(Listings, pk=listing_id)
+        user = request.user
+        if listing.user_id != user:
+            return HttpResponseForbidden("You do not have permission to edit this listing's picture.")
+
         picture_form = PictureForm(request.POST, request.FILES)
 
         if picture_form.is_valid():
@@ -391,6 +395,9 @@ class DeleteListingPicture(LoginRequiredMixin, View):
     def post(self, request, listing_id, picture_id):
         listing = get_object_or_404(Listings, pk=listing_id)
         picture = Picture.objects.get(pk=picture_id)
+
+        if listing.user_id != request.user:
+            return HttpResponseForbidden("You do not have permission to edit this listing's picture.")
 
         if picture.listing_id == listing.id:
             picture.delete()
