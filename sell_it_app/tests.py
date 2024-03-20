@@ -5,7 +5,9 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client
 from django.urls import reverse
+from django.utils.datastructures import MultiValueDict
 
+from sell_it_app.forms import PictureForm, ListingsForm, AddressesForm
 from sell_it_app.models import User, Category, Newsletter, Listings, Address, Picture, Messages, Avatars
 
 
@@ -574,29 +576,38 @@ def test_add_listing_view_logged_user_status_code_ok(client):
     category = Category.objects.create(name='testcategory')
     category.save()
 
-    address = Address.objects.create(street_name='testaddress', user_id=user)
-    address.save()
-
     client.login(username='testuser', password='testtesttesttest')
 
-    listing = Listings.objects.create(user_id=user, category_id=category, address_id=address, condition='Used',
-                                      offer_type='Sell', promotion='Not Promoted', status='Active',
-                                      title='Test Listing', description='This is a test listing', price=10.99)
-    listing.save()
-
-    image = open('sell_it_app/static/test/test_avatar.png', 'rb')
-    uploaded_file = SimpleUploadedFile(name='test_avatar.png', content=image.read(), content_type='image/png')
-
-    listing_picture = Picture.objects.create(image=uploaded_file, user_id=user, listing_id=listing.id)
-    listing_picture.save()
-
-    response = client.get(f'/listing/map/{listing.id}/')
+    response = client.get('/add-listing/')
     assert response.status_code == 200
-    assert Listings.objects.filter(id=listing.id).count() == 1
-    assert Address.objects.filter(id=address.id).count() == 1
-    assert Category.objects.filter(id=category.id).count() == 1
-    assert Picture.objects.count() == 1
 
+    image1 = open('sell_it_app/static/test/test_avatar1.png', 'rb')
+    image2 = open('sell_it_app/static/test/test_avatar2.png', 'rb')
+    uploaded_file1 = SimpleUploadedFile(name='test_avatar1.png', content=image1.read(), content_type='image/png')
+    uploaded_file2 = SimpleUploadedFile(name='test_avatar2.png', content=image2.read(), content_type='image/png')
+    multiple_images = [uploaded_file1, uploaded_file2]
+
+    post_data = {
+        'user_id': user.pk,
+        'category_id': category.pk,
+        'condition': 'New',
+        'offer_type': 'Sell',
+        'image': multiple_images,
+        'street_name': 'Test address',
+        'postal_code': '12345',
+        'country': 'country',
+        'city': 'city',
+        'title': 'Test title',
+        'description': 'This is a test listing',
+        'price': 100
+    }
+
+    response = client.post('/add-listing/', post_data)
+
+    assert response.status_code == 302
+    assert Listings.objects.count() == 1
+    assert Address.objects.count() == 1
+    assert Picture.objects.count() == 2
 
 @pytest.mark.django_db
 def test_add_listing_view_logged_user_status_code_not_ok(client):
@@ -611,37 +622,45 @@ def test_add_listing_view_logged_user_status_code_not_ok(client):
     category = Category.objects.create(name='testcategory')
     category.save()
 
-    address = Address.objects.create(street_name='testaddress', user_id=user)
-    address.save()
-
     client.login(username='testuser', password='testtesttesttest')
 
     response = client.get('/add-listing/')
     assert response.status_code == 200
 
+    image1 = open('sell_it_app/static/test/test_avatar1.png', 'rb')
+    image2 = open('sell_it_app/static/test/test_avatar2.png', 'rb')
+    uploaded_file1 = SimpleUploadedFile(name='test_avatar1.png', content=image1.read(), content_type='image/png')
+    uploaded_file2 = SimpleUploadedFile(name='test_avatar2.png', content=image2.read(), content_type='image/png')
+    image1.close()
+    image2.close()
+
+    image_dict = MultiValueDict({'image': [uploaded_file1, uploaded_file2]})
+
+    post_data = {
+        'user_id': user.pk,
+        'category_id': category.pk,
+        'image': image_dict,
+        'street_name': 'Test address',
+        'postal_code': '12345',
+        'country': 'country',
+        'city': 'city',
+        'price': 100
+    }
     try:
-        image = open('', 'rb')
-        uploaded_file = SimpleUploadedFile(name='', content=image.read(), content_type='image/png')
+        response = client.post('/add-listing/', post_data, **image_dict)
+    except IntegrityError:
+        pass
 
-        listing = Listings.objects.create(user_id=user, category_id=category, address_id=address, condition='Used',
-                                          offer_type='Sell', promotion='Not Promoted', status='Active',
-                                          title='Test Listing', description='This is a test listing', price=10.99)
-        listing.save()
-
-        listing_picture = Picture.objects.create(image=uploaded_file, user_id=user, listing_id=listing.id)
-        listing_picture.save()
-    except FileNotFoundError:
-        assert Picture.objects.count() == 0
+        assert response.status_code != 302
         assert Listings.objects.count() == 0
-
-    assert Address.objects.filter(id=address.id).count() == 1
-    assert Category.objects.filter(id=category.id).count() == 1
-
+        assert Address.objects.count() == 0
+        assert Picture.objects.count() == 0
 
 
 @pytest.mark.django_db
-
-
+def test_add_listing_unregistered_fail(client):
+     response = client.get('/add-listing/')
+     assert response.status_code != 200
 
 
 @pytest.mark.django_db
@@ -673,20 +692,228 @@ def test_messages_view_logged_user_status_code_ok(client):
 
 
 @pytest.mark.django_db
+def test_messages_delete_view_status_code_ok(client):
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
 
+    user = User.objects.create_user(username='testuser', password='testtest')
+    user1 = User.objects.create_user(username='testuser1', password='testtest1')
+
+    message = Messages.objects.create(
+        title='Test Message',
+        message='Test Message',
+        from_user=user,
+        to_user=user1,
+    )
+    message.save()
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+
+    client.login(username='testuser', password='testtest')
+    response = client.post(f'/message/delete/{message.pk}/')
+
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 2
+    assert response.status_code == 302
 
 
 @pytest.mark.django_db
+def test_messages_delete_view_status_code_not_ok(client):
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
 
+    user = User.objects.create_user(username='testuser', password='testtest')
+    user1 = User.objects.create_user(username='testuser1', password='testtest1')
 
+    message = Messages.objects.create(
+        title='Test Message',
+        message='Test Message',
+        from_user=user,
+        to_user=user1,
+    )
+    message.save()
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+
+    client.login(username='testuser', password='testtest')
+    response = client.post(f'/message/delete/99/')
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+    assert response.status_code != 302
 
 
 @pytest.mark.django_db
+def test_send_messages_view_status_code_ok(client):
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtest')
+    user1 = User.objects.create_user(username='testuser1', password='testtest1')
+
+    message = Messages.objects.create(
+        title='Test Message',
+        message='Test Message',
+        from_user=user,
+        to_user=user1,
+    )
+    message.save()
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+
+    client.login(username='testuser1', password='testtest1')
+    response = client.post(f'/send-message/{message.id}/', {
+        'from_user': user1,
+        'to_user': user,
+        'title': message.title,
+        'message': 'test return message'
+    })
+
+    assert Messages.objects.count() == 2
+    assert User.objects.count() == 2
+    assert response.status_code == 200
 
 
+@pytest.mark.django_db
+def test_send_messages_view_status_code_not_ok(client):
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtest')
+    user1 = User.objects.create_user(username='testuser1', password='testtest1')
+
+    message = Messages.objects.create(
+        title='Test Message',
+        message='Test Message',
+        from_user=user,
+        to_user=user1,
+    )
+    message.save()
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+
+    client.login(username='testuser1', password='testtest1')
+    response = client.post(f'/send-message/99/', {
+        'from_user': user1,
+        'to_user': user,
+        'title': message.title,
+        'message': 'test return message'
+    })
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+    assert response.status_code != 200
 
 
+@pytest.mark.django_db
+def test_show_messages_view_status_code_ok(client):
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
 
+    user = User.objects.create_user(username='testuser', password='testtest')
+    user1 = User.objects.create_user(username='testuser1', password='testtest1')
+
+    message = Messages.objects.create(
+        title='Test Message',
+        message='Test Message',
+        from_user=user,
+        to_user=user1,
+    )
+    message.save()
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+
+    client.login(username='testuser1', password='testtest1')
+    response = client.get(f'/show-message/{message.id}/')
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_show_messages_view_status_code_not_ok(client):
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtest')
+    user1 = User.objects.create_user(username='testuser1', password='testtest1')
+
+    message = Messages.objects.create(
+        title='Test Message',
+        message='Test Message',
+        from_user=user,
+        to_user=user1,
+    )
+    message.save()
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+
+    client.login(username='testuser1', password='testtest1')
+    response = client.get(f'/show-message/99/')
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+    assert response.status_code != 200
+
+@pytest.mark.django_db
+def test_send_new_message_view_status_code_ok(client):
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Listings.objects.count() == 0
+
+    user = User.objects.create_user(username='testuser', password='testtest')
+    user1 = User.objects.create_user(username='testuser1', password='testtest1')
+
+    category = Category.objects.create(name='Test')
+    address = Address.objects.create(user_id=user, street_name='Test Street', street_name_secondary='test', country='test country', postal_code="1234", city='Test')
+
+    listing = Listings.objects.create(
+        user_id=user,
+        category_id=category,
+        address_id=address,
+        condition='Used',
+        offer_type='Sell',
+        promotion='Not Promoted',
+        description='test',
+        price=100
+    )
+
+    client.login(username='testuser1', password='testtest1')
+
+    response = client.post(f'/send-new-message/{listing.id}/', {
+        'title': listing.title,
+        'message': 'test message text',
+        'from_user': user1,
+        'to_user': user,
+    })
+
+    assert Messages.objects.count() == 1
+    assert User.objects.count() == 2
+    assert Address.objects.count() == 1
+    assert Category.objects.count() == 1
+    assert Listings.objects.count() == 1
+    assert response.status_code == 302
+
+
+@pytest.mark.django_db
+def test_send_new_message_view_status_code_not_ok(client):
+    response = client.post(f'/send-new-message/99/')
+
+    assert Messages.objects.count() == 0
+    assert User.objects.count() == 0
+    assert Address.objects.count() == 0
+    assert Category.objects.count() == 0
+    assert Listings.objects.count() == 0
+    assert response.status_code == 302
 
 
 @pytest.mark.django_db
