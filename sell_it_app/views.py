@@ -16,7 +16,27 @@ User = get_user_model()
 
 
 class IndexView(View):
+    """
+    View for rendering the index page.
+
+    Methods:
+        get(self, request): Handles GET requests to the index page.
+    """
+
     def get(self, request):
+        """
+        Handles GET requests to the index page.
+
+        Retrieves promoted and recently added listings, shuffles promoted listings,
+        selects a subset for the carousel, and renders the index page with the context.
+
+        Parameters:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            HttpResponse: The rendered index page with the context.
+        """
+
         promoted_listings = list(Listings.objects.filter(promotion='Promoted').order_by('-add_date'))
         random.shuffle(promoted_listings)
         carousel = promoted_listings[:3]
@@ -31,10 +51,46 @@ class IndexView(View):
 
 
 class LoginView(View):
+    """
+    View for handling user login.
+
+    Methods:
+        get(self, request): Handles GET requests to the login page.
+        post(self, request, *args, **kwargs): Handles POST requests to authenticate users.
+    """
+
     def get(self, request):
+        """
+        Handles GET requests to the login page.
+
+        Renders the login page.
+
+        Parameters:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            HttpResponse: The rendered login page.
+        """
+
         return render(request, 'sell_it_app/login.html')
 
     def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests to authenticate users.
+
+        Authenticates user credentials and redirects to the dashboard upon successful login.
+        Sets a cookie to indicate user authentication status.
+
+        Parameters:
+            request (HttpRequest): The HTTP request object.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the dashboard upon successful login.
+            HttpResponse: The rendered login page with an error message if login fails.
+        """
+
         username = request.POST.get('username')
         password = request.POST.get('password')
 
@@ -54,16 +110,55 @@ class LoginView(View):
 
 
 class LogOutView(LoginRequiredMixin, View):
+    """
+    View for logging out the user.
+
+    Redirects to the index page after successful logout.
+
+    Requires the user to be logged in.
+    """
+
     def get(self, request):
+        """
+        Logs out the user and redirects to the index page.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the index page.
+        """
+
         logout(request)
         return redirect('index')
 
 
 class RegisterView(View):
+    """
+    View for user registration.
+
+    GET request renders the registration form.
+    POST request processes the form data for user registration.
+    """
+
     def get(self, request):
+        """
+        Renders the registration form.
+
+        Returns:
+            HttpResponse: Rendered registration form.
+        """
+
         return render(request, 'sell_it_app/register.html')
 
     def post(self, request, *args, **kwargs):
+        """
+        Processes the form data for user registration.
+
+        Checks for username availability and form validity before creating a new user.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the login page after successful registration.
+            HttpResponse: Rendered registration form with error messages if registration fails.
+        """
+
         username = request.POST.get('username')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
@@ -102,7 +197,24 @@ class RegisterView(View):
 
 
 class CategoryView(View):
+    """
+    View for displaying listings within a specific category.
+
+    GET request renders the category page with listings filtered by category.
+    """
+
     def get(self, request, category_id):
+        """
+        Renders the category page with listings filtered by category.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            category_id (int): ID of the category.
+
+        Returns:
+            HttpResponse: Rendered category page.
+        """
+
         category = get_object_or_404(Category, id=category_id)
         listings = Listings.objects.filter(category_id=category).order_by('-add_date')
 
@@ -118,25 +230,77 @@ class CategoryView(View):
 
 
 class DashboardView(LoginRequiredMixin, View):
+    """
+    View for rendering the user dashboard.
+
+    Requires the user to be logged in.
+    """
+
     def get(self, request):
+        """
+        Renders the user dashboard.
+
+        Returns:
+            HttpResponse: Rendered dashboard page with user avatar.
+        """
+
         avatar = Avatars.objects.filter(user_id=request.user).last()
         return render(request, 'sell_it_app/dashboard.html', {'avatar': avatar})
 
 
 class ProfileView(LoginRequiredMixin, View):
+    """
+    View for rendering the user profile page.
+
+    GET request renders the user profile page with the avatar form.
+
+    Requires the user to be logged in.
+    """
+
     def get(self, request):
+        """
+        Renders the user profile page with the avatar form.
+
+        Returns:
+            HttpResponse: Rendered profile page with user avatar and avatar form.
+        """
+
         avatar = Avatars.objects.filter(user_id=request.user).last()
         form = AvatarForm()
         return render(request, 'sell_it_app/profile.html', {'avatar': avatar, 'form': form})
 
 
 class UpdateProfileView(LoginRequiredMixin, View):
+    """
+    View for updating user profile information.
+
+    GET request renders the profile page with the profile update form.
+    POST request processes the form data for updating user profile information.
+
+    Requires the user to be logged in.
+    """
+
     def get(self, request):
+        """
+        Renders the profile page with the profile update form.
+
+        Returns:
+            HttpResponse: Rendered profile page with user profile and profile update form.
+        """
+
         user = User.objects.get(id=request.user.id)
         form = ProfileForm(instance=user)
         return render(request, 'sell_it_app/profile.html', {'user': user, 'form': form})
 
     def post(self, request):
+        """
+        Processes the form data for updating user profile information.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the profile page after successful profile update.
+            HttpResponse: Rendered profile page with error messages if profile update fails.
+        """
+
         user = User.objects.get(id=request.user.id)
         form = ProfileForm(request.POST, instance=user)
         if form.is_valid():
@@ -151,7 +315,23 @@ class UpdateProfileView(LoginRequiredMixin, View):
 
 
 class UpdatePassword(LoginRequiredMixin, View):
+    """
+    View for updating user password.
+
+    POST request processes the form data for updating user password.
+
+    Requires the user to be logged in.
+    """
+
     def post(self, request):
+        """
+        Processes the form data for updating user password.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the profile page after successful password update.
+            HttpResponse: Rendered profile page with error messages if password update fails.
+        """
+
         form = PasswordForm(request.POST)
         avatar = Avatars.objects.filter(user_id=request.user).first()
         user = request.user
@@ -173,7 +353,23 @@ class UpdatePassword(LoginRequiredMixin, View):
 
 
 class UpdateProfileAvatarView(LoginRequiredMixin, View):
+    """
+    View for updating user profile avatar.
+
+    POST request processes the form data for updating user profile avatar.
+
+    Requires the user to be logged in.
+    """
+
     def post(self, request):
+        """
+        Processes the form data for updating user profile avatar.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the profile page after successful avatar update.
+            HttpResponse: Rendered profile page with error messages if avatar update fails.
+        """
+
         form = AvatarForm(request.POST, request.FILES)
         avatar = Avatars.objects.filter(user_id=request.user).first()
         user = request.user
@@ -192,12 +388,42 @@ class UpdateProfileAvatarView(LoginRequiredMixin, View):
 
 
 class PublicProfileView(View):
+    """
+    View for rendering public user profile page.
+
+    GET request renders the public user profile page.
+    """
+
     def get(self, request):
+        """
+        Renders the public user profile page.
+
+        Returns:
+            HttpResponse: Rendered public user profile page.
+        """
+
         return render(request, 'sell_it_app/public_profile.html')
 
 
 class SearchView(View):
+    """
+    View for searching listings.
+
+    GET request processes the search query and renders the search results page.
+
+    Attributes:
+        query (str): The search query entered by the user.
+        searching (QuerySet): Queryset of listings filtered by the search query.
+    """
+
     def get(self, request):
+        """
+        Processes the search query and renders the search results page.
+
+        Returns:
+            HttpResponse: Rendered search results page.
+        """
+
         query = request.GET.get('search_query')
         searching = Listings.objects.filter(title__icontains=query).order_by('title')
 
@@ -216,7 +442,26 @@ class SearchView(View):
 
 
 class MyListingsView(LoginRequiredMixin, View):
+    """
+    View for displaying user's listings.
+
+    GET request renders the user's listings page.
+
+    Attributes:
+        all_listings (int): Total count of user's listings.
+        active_listings (int): Count of active listings belonging to the user.
+        inactive_listings (int): Count of inactive listings belonging to the user.
+        listings_type (str): Type of listings to display ('All', 'Active', 'Inactive').
+    """
+
     def get(self, request):
+        """
+        Renders the user's listings page.
+
+        Returns:
+            HttpResponse: Rendered user's listings page.
+        """
+
         all_listings = Listings.objects.filter(user_id=request.user.id).count()
         listings = Listings.objects.filter(user_id=request.user.id).order_by('-add_date')
         active_listings = Listings.objects.filter(user_id=request.user.id).filter(status='Active').count()
@@ -244,7 +489,26 @@ class MyListingsView(LoginRequiredMixin, View):
 
 
 class ListingView(View):
+    """
+    View for displaying individual listing details.
+
+    GET request renders the listing page with details and pictures.
+
+    Attributes:
+        user (User): The current user accessing the page.
+        listing (Listing): The listing object being viewed.
+        avatar (Avatar): The avatar of the user who created the listing.
+        pictures (QuerySet): Queryset of pictures related to the listing.
+    """
+
     def get(self, request, listing_id):
+        """
+        Renders the listing page with details and pictures.
+
+        Returns:
+            HttpResponse: Rendered listing page.
+        """
+
         user = request.user
         if user.is_authenticated:
             listing = get_object_or_404(Listings, pk=listing_id)
@@ -262,13 +526,49 @@ class ListingView(View):
 
 
 class ListingGoogleMapsView(View):
+    """
+    View for displaying Google Maps for a specific listing.
+
+    GET request renders the Google Maps page for the specified listing.
+
+    Attributes:
+        listing_id (int): ID of the listing.
+    """
+
     def get(self, request, listing_id):
+        """
+        Renders the Google Maps page for the specified listing.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            listing_id (int): ID of the listing.
+
+        Returns:
+            HttpResponse: Rendered Google Maps page.
+        """
+
         listing = get_object_or_404(Listings, pk=listing_id)
         return render(request, 'sell_it_app/google_maps.html', {'listing': listing})
 
 
 class AddListingView(LoginRequiredMixin, View):
+    """
+    View for adding a new listing.
+
+    GET request renders the add listing form.
+    POST request processes the form data for adding a new listing.
+
+    Requires the user to be logged in.
+    """
+
     def get(self, request):
+        """
+        Renders the add listing form.
+
+        Returns:
+            HttpResponse: Rendered add listing form.
+        """
+
         categories = Category.objects.all()
 
         ctx = {
@@ -277,6 +577,14 @@ class AddListingView(LoginRequiredMixin, View):
         return render(request, 'sell_it_app/add_listing.html', ctx)
 
     def post(self, request):
+        """
+        Processes the form data for adding a new listing.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the newly added listing details page.
+            HttpResponse: Rendered add listing form with error messages if form submission fails.
+        """
+
         picture_form = PictureForm(request.POST, request.FILES)
         address_form = AddressesForm(request.POST)
         listing_form = ListingsForm(request.POST)
@@ -324,7 +632,27 @@ class AddListingView(LoginRequiredMixin, View):
 
 
 class EditListingView(LoginRequiredMixin, View):
+    """
+    View for editing a listing.
+
+    GET request renders the edit listing form.
+    POST request processes the form data for updating the listing details.
+
+    Requires the user to be logged in.
+    """
+
     def get(self, request, listing_id):
+        """
+        Renders the edit listing form.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            listing_id (int): ID of the listing.
+
+        Returns:
+            HttpResponse: Rendered edit listing form.
+        """
+
         listing = get_object_or_404(Listings, pk=listing_id)
         categories = Category.objects.all()
         address = Address.objects.get(id=listing.address_id.id)
@@ -338,6 +666,18 @@ class EditListingView(LoginRequiredMixin, View):
         })
 
     def post(self, request, listing_id):
+        """
+        Processes the form data for updating the listing details.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            listing_id (int): ID of the listing.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the updated listing details page.
+            HttpResponse: Rendered edit listing form with error messages if form submission fails.
+        """
+
         listing = get_object_or_404(Listings, pk=listing_id)
         listing_form = ListingsForm(request.POST, instance=listing)
         address_form = AddressesForm(request.POST, instance=listing.address_id)
@@ -363,11 +703,43 @@ class EditListingView(LoginRequiredMixin, View):
 
 
 class EditListingPictureView(LoginRequiredMixin, View):
+    """
+    View for editing a listing's pictures.
+
+    GET request renders the edit listing form with picture uploads.
+    POST request processes the form data for uploading new pictures to the listing.
+
+    Requires the user to be logged in.
+    """
+
     def get(self, request, listing_id):
+        """
+        Renders the edit listing form with picture uploads.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            listing_id (int): ID of the listing.
+
+        Returns:
+            HttpResponse: Rendered edit listing form with picture uploads.
+        """
+
         listing = get_object_or_404(Listings, pk=listing_id)
         return render(request, 'sell_it_app/edit_listing.html', {'listing': listing})
 
     def post(self, request, listing_id):
+        """
+        Processes the form data for uploading new pictures to the listing.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            listing_id (int): ID of the listing.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the updated listing details page.
+            HttpResponse: Rendered edit listing form with error messages if form submission fails.
+        """
+
         listing = get_object_or_404(Listings, pk=listing_id)
         user = request.user
         if listing.user_id != user:
@@ -392,7 +764,27 @@ class EditListingPictureView(LoginRequiredMixin, View):
 
 
 class DeleteListingPicture(LoginRequiredMixin, View):
+    """
+    View for deleting a listing's picture.
+
+    POST request processes the form data for deleting a picture associated with a listing.
+
+    Requires the user to be logged in.
+    """
+
     def post(self, request, listing_id, picture_id):
+        """
+        Processes the form data for deleting a picture associated with a listing.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            listing_id (int): ID of the listing.
+            picture_id (int): ID of the picture.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the updated listing details page.
+        """
+
         listing = get_object_or_404(Listings, pk=listing_id)
         picture = Picture.objects.get(pk=picture_id)
 
@@ -408,7 +800,26 @@ class DeleteListingPicture(LoginRequiredMixin, View):
 
 
 class UpdateListingStatusView(LoginRequiredMixin, View):
+    """
+    View for updating the status of a listing.
+
+    POST request processes the form data for updating the status of a listing.
+
+    Requires the user to be logged in.
+    """
+
     def post(self, request, listing_id):
+        """
+        Processes the form data for updating the status of a listing.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            listing_id (int): ID of the listing.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the listings page after updating the status.
+        """
+
         listing = get_object_or_404(Listings, pk=listing_id)
 
         if listing.status == 'Active':
@@ -423,7 +834,26 @@ class UpdateListingStatusView(LoginRequiredMixin, View):
 
 
 class DeleteListingView(LoginRequiredMixin, View):
+    """
+    View for deleting a listing.
+
+    POST request processes the form data for deleting a listing.
+
+    Requires the user to be logged in.
+    """
+
     def post(self, request, listing_id):
+        """
+        Processes the form data for deleting a listing.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            listing_id (int): ID of the listing.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the listings page after deleting the listing.
+        """
+
         listing = get_object_or_404(Listings, id=listing_id)
 
         if listing:
@@ -433,7 +863,34 @@ class DeleteListingView(LoginRequiredMixin, View):
 
 
 class MessagesView(LoginRequiredMixin, View):
+    """
+    View for displaying messages.
+
+    Attributes:
+        user (User): The current authenticated user.
+        id (int): The ID of the current authenticated user.
+        messages (QuerySet): The messages related to the current user.
+        user_messages (int): The total number of messages received by the user.
+        user_unread_messages (int): The number of unread messages received by the user.
+        user_read_messages (int): The number of read messages received by the user.
+        user_sent_messages (int): The number of messages sent by the user.
+        message_type (str): The type of messages to display (All, Unread, Read, Sent).
+        paginator (Paginator): Paginator object for paginating messages.
+        page_number (str): The current page number of the paginated messages.
+        page_obj (Page): Page object containing the messages for the current page.
+        ctx (dict): Context dictionary containing data to be rendered in the template.
+    """
+    
     def get(self, request):
+        """
+        Handles GET requests to display messages.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            render: Renders the 'messages.html' template with context data.
+        """
         user = request.user
         if user.is_authenticated:
             id = user.id
@@ -471,7 +928,27 @@ class MessagesView(LoginRequiredMixin, View):
 
 
 class MessageStatusUpdateView(LoginRequiredMixin, View):
+    """
+    View for updating the status of a message.
+
+    POST request updates the status of the message to either 'Read' or 'Unread'.
+
+    Attributes:
+        message (Messages): The message to update the status.
+    """
+
     def post(self, request, message_id):
+        """
+        Updates the status of the message to either 'Read' or 'Unread'.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            message_id (int): ID of the message to update.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the 'messages' page.
+        """
+
         message = get_object_or_404(Messages, id=message_id)
         if request.user.id != message.from_user_id and request.user.id != message.to_user_id:
             return HttpResponseForbidden("You do not have permission to change this message's status.")
@@ -487,7 +964,27 @@ class MessageStatusUpdateView(LoginRequiredMixin, View):
 
 
 class MessageDeleteView(LoginRequiredMixin, View):
+    """
+    View for deleting a message.
+
+    POST request deletes the specified message.
+
+    Attributes:
+        message (Messages): The message to delete.
+    """
+
     def post(self, request, message_id):
+        """
+        Deletes the specified message.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            message_id (int): ID of the message to delete.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the 'messages' page.
+        """
+
         message = get_object_or_404(Messages, id=message_id)
 
         if message:
@@ -496,7 +993,27 @@ class MessageDeleteView(LoginRequiredMixin, View):
 
 
 class ShowMessageView(LoginRequiredMixin, View):
+    """
+    View for displaying a single message.
+
+    GET request renders the 'message.html' template with message details.
+
+    Attributes:
+        message (Messages): The message to display.
+    """
+
     def get(self, request, message_id):
+        """
+        Renders the 'message.html' template with message details.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            message_id (int): ID of the message to display.
+
+        Returns:
+            HttpResponse: Renders the 'message.html' template.
+        """
+
         message = get_object_or_404(Messages, pk=message_id)
 
         if message.from_unregistered_user:
@@ -520,11 +1037,45 @@ class ShowMessageView(LoginRequiredMixin, View):
 
 
 class SendMessageView(LoginRequiredMixin, View):
+    """
+    View for sending a message as a response to an existing message.
+
+    GET request renders the 'message.html' template with the current message.
+    POST request sends the new message and renders the 'message.html' template
+    with appropriate success or error messages.
+
+    Attributes:
+        current_message (Messages): The current message being responded to.
+    """
+
     def get(self, request, message_id):
+        """
+        Renders the 'message.html' template with the current message.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            message_id (int): ID of the message to respond to.
+
+        Returns:
+            HttpResponse: Renders the 'message.html' template.
+        """
+
         current_message = get_object_or_404(Messages, pk=message_id)
         return render(request, 'sell_it_app/message.html', {'current_message': current_message})
 
     def post(self, request, message_id):
+        """
+        Sends a new message as a response to the current message and renders the
+        'message.html' template with appropriate success or error messages.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            message_id (int): ID of the message to respond to.
+
+        Returns:
+            HttpResponse: Renders the 'message.html' template.
+        """
+
         current_message = get_object_or_404(Messages, pk=message_id)
         # title = request.POST.get('title')
         title = f"RE: {current_message.title}"
@@ -570,11 +1121,45 @@ class SendMessageView(LoginRequiredMixin, View):
 
 
 class SendNewMessage(LoginRequiredMixin, View):
+    """
+    View for sending a new message to a listing owner.
+
+    GET request renders the 'send_new_message.html' template.
+    POST request sends the message and redirects to the listing details page
+    with appropriate success or error messages.
+
+    Attributes:
+        listing (Listings): The listing to which the message is being sent.
+    """
+
     def get(self, request, listing_id):
+        """
+        Renders the 'send_new_message.html' template with the listing details.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            listing_id (int): ID of the listing to which the message is sent.
+
+        Returns:
+            HttpResponse: Renders the 'send_new_message.html' template.
+        """
+
         listing = get_object_or_404(Listings, id=listing_id)
         return render(request, 'sell_it_app/send_new_message.html', {'listing': listing})
 
     def post(self, request, listing_id):
+        """
+        Sends a new message to the owner of the listing and redirects to the listing
+        details page with appropriate success or error messages.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+            listing_id (int): ID of the listing to which the message is sent.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the listing details page.
+        """
+
         listing = get_object_or_404(Listings, id=listing_id)
         sender = request.user.id
         recipient = listing.user_id.id
@@ -596,40 +1181,174 @@ class SendNewMessage(LoginRequiredMixin, View):
 
 
 class MyAddressView(LoginRequiredMixin, View):
+    """
+    View for displaying user's address information.
+
+    Only accessible for authenticated users.
+
+    GET request renders the 'my_address.html' template.
+    """
+
     def get(self, request):
+        """
+        Renders the 'my_address.html' template.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+
+        Returns:
+            HttpResponse: Renders the 'my_address.html' template.
+        """
+
         return render(request, 'sell_it_app/my_address.html')
 
 
 class PaymentsView(LoginRequiredMixin, View):
+    """
+    View for displaying payment information.
+
+    Only accessible for authenticated users.
+
+    GET request renders the 'payments.html' template.
+    """
+
     def get(self, request):
+        """
+        Renders the 'payments.html' template.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+
+        Returns:
+            HttpResponse: Renders the 'payments.html' template.
+        """
+
         return render(request, 'sell_it_app/payments.html')
 
 
 class FavouritesView(LoginRequiredMixin, View):
+    """
+    View for displaying user's favourite items.
+
+    Only accessible for authenticated users.
+
+    GET request renders the 'favourites.html' template.
+    """
+
     def get(self, request):
+        """
+        Renders the 'favourites.html' template.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+
+        Returns:
+            HttpResponse: Renders the 'favourites.html' template.
+        """
+
         return render(request, 'sell_it_app/favourites.html')
 
 
 class SavedSearchesView(LoginRequiredMixin, View):
+    """
+    View for displaying user's saved searches.
+
+    Only accessible for authenticated users.
+
+    GET request renders the 'saved_searches.html' template.
+    """
+
     def get(self, request):
+        """
+        Renders the 'saved_searches.html' template.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+
+        Returns:
+            HttpResponse: Renders the 'saved_searches.html' template.
+        """
+
         return render(request, 'sell_it_app/saved_searches.html')
 
 
 class AboutUsView(View):
+    """
+    View for displaying information about the website.
+
+    GET request renders the 'about_us.html' template.
+    """
+
     def get(self, request):
+        """
+        Renders the 'about_us.html' template.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+
+        Returns:
+            HttpResponse: Renders the 'about_us.html' template.
+        """
+
         return render(request, 'sell_it_app/about_us.html')
 
 
 class FaqView(View):
+    """
+    View for displaying Frequently Asked Questions (FAQ).
+
+    GET request renders the 'faq.html' template.
+    """
+
     def get(self, request):
+        """
+        Renders the 'faq.html' template.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+
+        Returns:
+            HttpResponse: Renders the 'faq.html' template.
+        """
+
         return render(request, 'sell_it_app/faq.html')
 
 
 class ContactUsView(View):
+    """
+    View for handling contact form submissions.
+
+    GET request renders the contact form.
+    POST request processes the form data and sends a message.
+
+    If the user is authenticated, the message is sent from the user to the admin.
+    If the user is not authenticated, the message is sent from an unregistered email address to the admin.
+    """
+
     def get(self, request):
+        """
+        Renders the contact form.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+
+        Returns:
+            HttpResponse: Renders the contact form.
+        """
+
         return render(request, 'sell_it_app/contact_us.html')
 
     def post(self, request):
+        """
+        Processes the form data and sends a message.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+
+        Returns:
+            HttpResponse: Renders the contact form with success or error messages.
+        """
+
         title = request.POST.get('title')
         message = request.POST.get('message')
 
@@ -676,10 +1395,37 @@ class ContactUsView(View):
 
 
 class NewsletterView(View):
+    """
+    View for subscribing to the newsletter.
+
+    GET request renders the newsletter subscription form.
+    POST request processes the form data for subscribing to the newsletter.
+    """
+
     def get(self, request):
+        """
+        Renders the newsletter subscription form.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+
+        Returns:
+            HttpResponse: Renders the newsletter subscription form.
+        """
+
         return render(request, 'sell_it_app/newsletter.html')
 
     def post(self, request):
+        """
+        Processes the form data for subscribing to the newsletter.
+
+        Args:
+            request (HttpRequest): HTTP request object.
+
+        Returns:
+            HttpResponseRedirect: Redirects to the newsletter page after subscription.
+        """
+
         email = request.POST.get('email')
         registered_email = Newsletter.objects.filter(email=email).last()
 
