@@ -880,7 +880,7 @@ class MessagesView(LoginRequiredMixin, View):
         page_obj (Page): Page object containing the messages for the current page.
         ctx (dict): Context dictionary containing data to be rendered in the template.
     """
-    
+
     def get(self, request):
         """
         Handles GET requests to display messages.

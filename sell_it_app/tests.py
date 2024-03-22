@@ -16,6 +16,16 @@ from sell_it_app.models import User, Category, Newsletter, Listings, Address, Pi
 
 @pytest.mark.django_db
 def test_index_page_status_code(client):
+    """
+    Test function to check the status code of the index page.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.get('/')
     assert response.status_code == 200
 
@@ -24,12 +34,32 @@ def test_index_page_status_code(client):
 
 @pytest.mark.django_db
 def test_login_page_status_code(client):
+    """
+    Test function to check the status code of the login page.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.get('/login/')
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_login_user_ok(client):
+    """
+    Test function to check if a user can login successfully.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     password = 'testtesttest'
     if len(password) >= 6:
         response = client.post('/login/', {'username': 'test', 'password': f'{password}'})
@@ -38,6 +68,16 @@ def test_login_user_ok(client):
 
 @pytest.mark.django_db
 def test_login_user_invalid(client):
+    """
+    Test function to check if an invalid user login attempt returns the correct response.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.post('/login/', {'username': 'test', f'password': 'a'})
     assert response.status_code == 200
     assert 'Invalid username or password.' in response.content.decode()
@@ -47,12 +87,32 @@ def test_login_user_invalid(client):
 
 @pytest.mark.django_db
 def test_logout_user_ok(client):
+    """
+    Test function to check if a user can logout successfully.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.post('/logout/', {'username': 'test', 'password': 'passpass'})
     assert response.status_code == 302
 
 
 @pytest.mark.django_db
 def test_register_user_ok(client):
+    """
+    Test function to check if a user can register successfully.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
 
     gender = "M"
@@ -86,6 +146,16 @@ def test_register_user_ok(client):
 
 @pytest.mark.django_db
 def test_register_user_invalid(client):
+    """
+    Test function to check if registration with invalid data fails as expected.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
 
     gender = "W"
@@ -115,6 +185,13 @@ def test_register_user_invalid(client):
 # register page
 @pytest.mark.django_db
 def test_create_user():
+    """
+    Test function to check if a user can be created successfully.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(username='Rafal', email='test@gmail.com', password='secret_password')
     user.save()
     assert user.username == 'Rafal'
@@ -125,6 +202,13 @@ def test_create_user():
 
 @pytest.mark.django_db
 def test_create_user_invalid():
+    """
+    Test function to check if user creation fails with invalid data.
+
+    Returns:
+        None
+    """
+
     password2 = 'sh'
     password = 'short'
     username = 'test1'
@@ -141,6 +225,16 @@ def test_create_user_invalid():
 
 @pytest.mark.django_db
 def test_admin_panel_ok(client):
+    """
+    Test function to check if the admin panel is accessible for the admin user.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     admin = User.objects.create_superuser(
         username="admin",
         password="adminadminadmin",
@@ -157,6 +251,16 @@ def test_admin_panel_ok(client):
 
 @pytest.mark.django_db
 def test_admin_panel_not_ok(client):
+    """
+    Test function to check if non-admin users cannot access the admin panel.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(
         username="admin",
         password="adminadminadmin",
@@ -173,18 +277,48 @@ def test_admin_panel_not_ok(client):
 
 @pytest.mark.django_db
 def test_dashboard_status_code(client):
+    """
+    Test function to check if accessing the dashboard page returns the expected status code.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.post('/dashboard/', {'username': 'test', 'password': 'testtesttest'})
     assert response.status_code == 302
 
 
 @pytest.mark.django_db
 def test_dashboard_status_wrong_code(client):
+    """
+    Test function to check if accessing the dashboard page with wrong HTTP method returns the expected status code.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.get('/dashboard/')
     assert response.status_code != 200
 
 
 @pytest.mark.django_db
 def test_category_status_code_ok(client):
+    """
+    Test function to check if accessing a valid category page returns the expected status code.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     category = Category.objects.create(name='test', description='test')
     response = client.get("/category/1/")
     assert response.status_code == 200
@@ -193,6 +327,16 @@ def test_category_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_category_status_code_not_exists(client):
+    """
+    Test function to check if accessing a non-existing category page returns the expected status code.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.get('/category/1/')
     assert response.status_code == 404
     assert Category.objects.filter(pk=1).exists() is False
@@ -200,6 +344,16 @@ def test_category_status_code_not_exists(client):
 
 @pytest.mark.django_db
 def test_profile_view_status_code(client):
+    """
+    Test function to check if accessing the profile page returns the expected status code.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(username='testuser', password='testtesttest')
     user.save()
     client.login(username='testuser', password='testtesttest')
@@ -210,12 +364,32 @@ def test_profile_view_status_code(client):
 
 @pytest.mark.django_db
 def test_profile_view_status_code_not_ok(client):
+    """
+    Test function to check if accessing the profile page without authentication returns the expected status code.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.get('/profile/')
     assert response.status_code != 200
 
 
 @pytest.mark.django_db
 def test_update_password_view_status_code_ok(client):
+    """
+    Test function to check if updating password for an authenticated user returns the expected status code.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
 
     user = User.objects.create_user(username='testuser', password='testtest')
@@ -238,6 +412,16 @@ def test_update_password_view_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_update_password_view_status_code_not_ok(client):
+    """
+    Test function to check if updating password with invalid inputs returns the expected status code and error message.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
 
     user = User.objects.create_user(username='testuser', password='testtest')
@@ -261,6 +445,16 @@ def test_update_password_view_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_update_password_view_not_logged_status_code_ok(client):
+    """
+    Test function to check if updating password without being logged in redirects to the login page.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.post('/profile/update-password/')
     assert response.status_code == 302
     assert User.objects.count() == 0
@@ -268,6 +462,16 @@ def test_update_password_view_not_logged_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_update_profile_view_not_logged_status_code_ok(client):
+    """
+    Test function to check if accessing the update profile page without being logged in redirects to the login page.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.get('/update-profile/')
     assert response.status_code == 302
     assert User.objects.count() == 0
@@ -275,6 +479,16 @@ def test_update_profile_view_not_logged_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_update_profile_logged_user_status_code_ok_updated(client):
+    """
+    Test function to check if updating the profile of a logged-in user returns the expected status code and updates the user's profile.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
 
     user = User.objects.create_user(
@@ -310,6 +524,16 @@ def test_update_profile_logged_user_status_code_ok_updated(client):
 
 @pytest.mark.django_db
 def test_update_profile_view_logged_user_status_code_ok_not_updated(client):
+    """
+    Test function to check if updating the profile of a logged-in user with invalid phone number does not update the profile.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
 
     user = User.objects.create_user(
@@ -348,6 +572,16 @@ def test_update_profile_view_logged_user_status_code_ok_not_updated(client):
 
 @pytest.mark.django_db
 def test_update_profile_avatar_logged_user_ok(client):
+    """
+    Test function to check if updating the avatar of a logged-in user returns the expected status code and updates the avatar.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
 
     user = User.objects.create_user(username='testuser', password='password')
@@ -385,6 +619,16 @@ def test_update_profile_avatar_logged_user_ok(client):
 
 @pytest.mark.django_db
 def test_update_profile_avatar_logged_user_fail(client):
+    """
+    Test function to check if uploading a non-image file as an avatar fails.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
 
     user = User.objects.create_user(username='testuser', password='password')
@@ -405,12 +649,32 @@ def test_update_profile_avatar_logged_user_fail(client):
 
 @pytest.mark.django_db
 def test_update_profile_avatar_view_not_logged_user_fail(client):
+    """
+    Test function to check if attempting to update avatar by a not logged-in user fails.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.post('/update-profile/avatar/')
     assert response.status_code != 200
 
 
 @pytest.mark.django_db
 def test_public_profile_view_status_code(client):
+    """
+    Test function to verify the status code of the public profile view.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(username='testuser', password='testtesttest')
     user.save()
     client.login(username='testuser', password='testtesttest')
@@ -421,12 +685,32 @@ def test_public_profile_view_status_code(client):
 
 @pytest.mark.django_db
 def test_public_profile_view_status_code_not_ok(client):
+    """
+    Test function to verify the status code of the public profile view when the user is not logged in.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.get('/public_profile/')
     assert response.status_code == 404
 
 
 @pytest.mark.django_db
 def test_search_view_logged_user_status_code_ok(client):
+    """
+    Test function to verify the status code of the search view for a logged-in user.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(username='testuser', password='testtesttest')
     user.save()
     client.login(username='testuser', password='testtesttest')
@@ -438,6 +722,16 @@ def test_search_view_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_search_view_not_logged_user_status_code_ok(client):
+    """
+    Test function to verify the status code of the search view for a not logged-in user.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     search_query = 'test'
     response = client.post(f'/search/?search_query={search_query}')
     assert response.status_code != 200
@@ -446,6 +740,16 @@ def test_search_view_not_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_listings_view_logged_user_status_code_ok(client):
+    """
+    Test function to verify the status code of the listings view for a logged-in user.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(username='testuser', password='testtesttesttest')
 
     client.login(username='testuser', password='testtesttesttest')
@@ -456,12 +760,32 @@ def test_listings_view_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_listings_view_not_logged_user_status_code_ok(client):
+    """
+    Test function to verify the status code of the listings view for a not logged-in user.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.get('/listings/')
     assert response.status_code != 200
 
 
 @pytest.mark.django_db
 def test_listing_map_view_logged_user_status_code_ok(client):
+    """
+    Test function to verify the status code of the listing map view for a logged-in user.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     assert Category.objects.count() == 0
     assert Address.objects.count() == 0
@@ -491,6 +815,16 @@ def test_listing_map_view_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_listing_details_view_logged_user_status_code_ok(client):
+    """
+    Test function to verify the status code of the listing details view for a logged-in user.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(username='testuser', password='testtesttesttest')
 
     category = Category.objects.create(name='testcategory')
@@ -518,6 +852,16 @@ def test_listing_details_view_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_listing_details_view_not_logged_user_status_code_ok(client):
+    """
+    Test function to verify the status code of the listing details view for a not logged-in user.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(username='testuser', password='testtesttesttest')
 
     category = Category.objects.create(name='testcategory')
@@ -543,6 +887,16 @@ def test_listing_details_view_not_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_listing_details_view_not_logged_user_status_code_not_ok(client):
+    """
+    Test function to verify the status code of the listing details view for a not logged-in user when the listing ID does not exist.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(username='testuser', password='testtesttesttest')
 
     category = Category.objects.create(name='testcategory')
@@ -565,6 +919,16 @@ def test_listing_details_view_not_logged_user_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_add_listing_view_logged_user_status_code_ok(client):
+    """
+    Test function to verify the status code and functionality of adding a listing by a logged-in user.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     assert Category.objects.count() == 0
     assert Address.objects.count() == 0
@@ -611,6 +975,16 @@ def test_add_listing_view_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_add_listing_view_logged_user_status_code_not_ok(client):
+    """
+    Test function to verify the status code and functionality of adding a listing by a logged-in user with invalid data.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     assert Category.objects.count() == 0
     assert Address.objects.count() == 0
@@ -659,12 +1033,32 @@ def test_add_listing_view_logged_user_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_add_listing_unregistered_fail(client):
-     response = client.get('/add-listing/')
-     assert response.status_code != 200
+    """
+    Test function to verify that unregistered users cannot access the add listing page.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
+    response = client.post('/add-listing/')
+    assert response.status_code != 200
 
 
 @pytest.mark.django_db
 def test_edit_listing_view_status_code_ok(client):
+    """
+    Test function to verify that the edit listing view returns a status code of 302 (Redirect) upon successful editing.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     assert Category.objects.count() == 0
     assert Address.objects.count() == 0
@@ -722,6 +1116,17 @@ def test_edit_listing_view_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_edit_listing_view_status_code_not_ok(client):
+    """
+    Test function to verify that the edit listing view returns a status code other than 302 (Redirect)
+    when the request is incomplete or invalid.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     assert Category.objects.count() == 0
     assert Address.objects.count() == 0
@@ -763,6 +1168,16 @@ def test_edit_listing_view_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_edit_listing_picture_success(client):
+    """
+    Test function to verify that adding pictures to a listing is successful.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     assert Category.objects.count() == 0
     assert Address.objects.count() == 0
@@ -828,12 +1243,31 @@ def test_edit_listing_picture_success(client):
 
 @pytest.mark.django_db
 def test_edit_listing_picture_fail(client):
+    """
+    Test function to verify that adding pictures to a non-existent listing fails.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.post(f'/edit-listing/99/picture/')
     assert response.status_code == 302
 
 
 @pytest.mark.django_db
 def test_delete_listing_picture_success(client):
+    """
+    Test function to verify successful deletion of a listing picture.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
 
     assert User.objects.count() == 0
     assert Category.objects.count() == 0
@@ -898,12 +1332,32 @@ def test_delete_listing_picture_success(client):
 
 @pytest.mark.django_db
 def test_delete_listing_picture_fail(client):
+    """
+    Test function to verify failure when attempting to delete a listing picture with invalid listing or picture IDs.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.post(f'/delete-listing-picture/99/1/')
     assert response.status_code == 302
 
 
 @pytest.mark.django_db
 def test_update_listing_status_view_success(client):
+    """
+    Test function to verify successful update of listing status.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     assert Category.objects.count() == 0
     assert Address.objects.count() == 0
@@ -954,6 +1408,16 @@ def test_update_listing_status_view_success(client):
 
 @pytest.mark.django_db
 def test_update_listing_status_view_fail(client):
+    """
+    Test function to verify failure to update listing status due to non-existent listing ID.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(username='testuser', password='testtesttesttest')
     client.login(username='testuser', password='testtesttesttest')
 
@@ -965,6 +1429,16 @@ def test_update_listing_status_view_fail(client):
 
 @pytest.mark.django_db
 def test_delete_listing_view_status_code_ok(client):
+    """
+    Test function to verify successful deletion of a listing.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     assert Category.objects.count() == 0
     assert Address.objects.count() == 0
@@ -1010,6 +1484,16 @@ def test_delete_listing_view_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_delete_listing_view_status_code_not_ok(client):
+    """
+    Test function to verify deletion of a non-existent listing returns a 404 status code.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     user = User.objects.create_user(username='testuser', password='testtesttesttest')
     client.login(username='testuser', password='testtesttesttest')
 
