@@ -1504,6 +1504,16 @@ def test_delete_listing_view_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_update_message_status_code_ok(client):
+    """
+    Test function to verify the successful update of the message status from "Unread" to "Read".
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+
+    """
     assert Messages.objects.count() == 0
     assert User.objects.count() == 0
 
@@ -1529,6 +1539,16 @@ def test_update_message_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_update_message_status_code_not_ok(client):
+    """
+    Test function to verify that a user cannot update the message status if they are not the recipient.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert Messages.objects.count() == 0
     assert User.objects.count() == 0
 
@@ -1554,6 +1574,16 @@ def test_update_message_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_messages_view_not_logged_user_status_code_ok(client):
+    """
+    Test function to verify that a not logged-in user cannot access the messages page.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert Messages.objects.count() == 0
 
     response = client.get('/messages/')
@@ -1563,6 +1593,16 @@ def test_messages_view_not_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_messages_view_logged_user_status_code_ok(client):
+    """
+    Test function to verify that a logged-in user can access the messages page.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert Messages.objects.count() == 0
     assert User.objects.count() == 0
 
@@ -1582,6 +1622,16 @@ def test_messages_view_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_messages_delete_view_status_code_ok(client):
+    """
+    Test function to verify that a logged-in user can delete a message.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert Messages.objects.count() == 0
     assert User.objects.count() == 0
 
@@ -1609,6 +1659,16 @@ def test_messages_delete_view_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_messages_delete_view_status_code_not_ok(client):
+    """
+    Test function to verify that attempting to delete a non-existent message returns a status code other than 302.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert Messages.objects.count() == 0
     assert User.objects.count() == 0
 
@@ -1636,6 +1696,16 @@ def test_messages_delete_view_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_send_messages_view_status_code_ok(client):
+    """
+    Test function to verify that sending a message returns a status code of 200.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert Messages.objects.count() == 0
     assert User.objects.count() == 0
 
@@ -1668,6 +1738,16 @@ def test_send_messages_view_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_send_messages_view_status_code_not_ok(client):
+    """
+     Test function to verify that attempting to send a message with an invalid message ID returns a status code other than 200.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert Messages.objects.count() == 0
     assert User.objects.count() == 0
 
@@ -1700,6 +1780,16 @@ def test_send_messages_view_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_show_messages_view_status_code_ok(client):
+    """
+    Test function to verify that the message details page returns a status code of 200 when accessed by the recipient user.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert Messages.objects.count() == 0
     assert User.objects.count() == 0
 
@@ -1727,6 +1817,16 @@ def test_show_messages_view_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_show_messages_view_status_code_not_ok(client):
+    """
+    Test function to verify that the message details page returns a status code other than 200 when accessed with an invalid message ID.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert Messages.objects.count() == 0
     assert User.objects.count() == 0
 
@@ -1753,6 +1853,16 @@ def test_show_messages_view_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_send_new_message_view_status_code_ok(client):
+    """
+    Test function to verify that a new message can be sent successfully from a listing details page.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert Messages.objects.count() == 0
     assert User.objects.count() == 0
     assert Address.objects.count() == 0
@@ -1795,6 +1905,16 @@ def test_send_new_message_view_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_send_new_message_view_status_code_not_ok(client):
+    """
+     Test function to verify that sending a new message from a listing details page fails when the listing ID does not exist.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.post(f'/send-new-message/99/')
 
     assert Messages.objects.count() == 0
@@ -1807,6 +1927,16 @@ def test_send_new_message_view_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_contact_view_logged_user_status_code_ok(client):
+    """
+    Test function to verify that logged-in users can contact the admin via the contact form.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     admin = User.objects.create_superuser(username='Admin')
     user = User.objects.create_user(username='testuser', password='testtest')
@@ -1823,6 +1953,16 @@ def test_contact_view_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_contact_view_not_logged_user_status_code_ok(client):
+    """
+    Test function to verify that unregistered users can contact the admin via the contact form.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     admin = User.objects.create_superuser(username='Admin')
 
@@ -1839,6 +1979,16 @@ def test_contact_view_not_logged_user_status_code_ok(client):
 
 @pytest.mark.django_db
 def test_contact_view_not_logged_user_status_code_not_ok(client):
+    """
+    Test function to verify that unregistered users cannot contact the admin via the contact form with an invalid email address.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     assert User.objects.count() == 0
     admin = User.objects.create_superuser(username='Admin')
 
@@ -1856,18 +2006,48 @@ def test_contact_view_not_logged_user_status_code_not_ok(client):
 
 @pytest.mark.django_db
 def test_about_us_status_code(client):
+    """
+    Test function to verify the status code of the "about-us" page.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.get(reverse('about-us'))
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_newsletter_ok(client):
+    """
+    Test function to verify the status code of the newsletter subscription page.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.get(reverse('newsletter'))
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
 def test_newsletter_register_email_ok(client):
+    """
+    Test function to verify the successful registration of an email for the newsletter.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     response = client.post('/newsletter/', {'email': 'test@gmail.com'})
     assert response.status_code == 302
     assert Newsletter.objects.count() == 1
@@ -1875,6 +2055,16 @@ def test_newsletter_register_email_ok(client):
 
 @pytest.mark.django_db
 def test_newsletter_register_email_exists(client):
+    """
+    Test function to verify the registration of an email for the newsletter when the email already exists in the database.
+
+    Args:
+        client (Client): Django test client.
+
+    Returns:
+        None
+    """
+
     email = Newsletter.objects.create(email='rafal.czerwik@gmail')
     email.save()
     response = client.post('/newsletter/', {'email': 'rafal.czerwik@gmail.com'})
